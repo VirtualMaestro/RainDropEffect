@@ -1,5 +1,3 @@
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
 static inline float3 ComputeDiffuse (float3 lightWorldPos, float3 modelNormal, float3 lightColor, float minimun) {
 	float3 L = normalize (lightWorldPos);
 	float3 N = normalize ((mul(float4(modelNormal, 0.0), unity_WorldToObject).xyz));

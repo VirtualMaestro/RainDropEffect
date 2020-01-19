@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace RainDropEffect2.Demo.Scripts
 {
-    public class DemoScene1 : MonoBehaviour {
+    public class DemoScene1 : MonoBehaviour 
+    {
         [SerializeField] 
         private List<RainCameraController> rainControllers;
 
@@ -46,7 +47,7 @@ namespace RainDropEffect2.Demo.Scripts
         {
             foreach (var con in rainControllers)
             {
-                con.StopImmidiate();
+                con.StopImmediate();
             }
         }
     }

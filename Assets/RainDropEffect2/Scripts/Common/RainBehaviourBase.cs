@@ -144,7 +144,7 @@ namespace RainDropEffect2.Scripts.Common
 		/// Stops the rain immidiately.
 		/// </summary>
 
-		public virtual void StopRainImmidiate () 
+		public virtual void StopRainImmediate () 
 		{
 			return;
 		}

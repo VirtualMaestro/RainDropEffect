@@ -131,7 +131,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 		}
 
 
-		public override void StopRainImmidiate ()
+		public override void StopRainImmediate ()
 		{
 			if (rainController == null)
 			{

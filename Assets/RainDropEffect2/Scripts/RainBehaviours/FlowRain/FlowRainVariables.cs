@@ -5,69 +5,69 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
 	[System.Serializable]
 	public class FlowRainVariables {
 
-		public bool AutoStart = true;
-		public bool PlayOnce = false;
+		public bool autoStart = true;
+		public bool playOnce;
 
-		public Color OverlayColor = Color.gray;
+		public Color overlayColor = Color.gray;
 		[Range(0.0f, 5.0f)]
-		public float Darkness;
+		public float darkness;
 
-		public Texture NormalMap;
-		public Texture OverlayTexture;
+		public Texture normalMap;
+		public Texture overlayTexture;
 
-		public float Duration = 1f;
-		public float Delay = 0f;
+		public float duration = 1f;
+		public float delay;
 
-		public int MaxRainSpawnCount = 30;
+		public int maxRainSpawnCount = 30;
 
 		[Range(-2, 2f)]
-		public float SpawnOffsetY = 0f;
+		public float spawnOffsetY;
 
 		[Range(0f, 10.0f)]
-		public float LifetimeMin = 0.6f;
+		public float lifetimeMin = 0.6f;
 		[Range(0f, 10.0f)]
-		public float LifetimeMax = 1.4f;
+		public float lifetimeMax = 1.4f;
 
 		[Range(0, 50f)]
-		public int EmissionRateMax = 5;
+		public int emissionRateMax = 5;
 
 		[Range(0, 50f)]
-		public int EmissionRateMin = 2;
+		public int emissionRateMin = 2;
 
 		[Range(5, 500)]
-		public float Resolution = 200;
+		public float resolution = 200;
 
-		public AnimationCurve AlphaOverLifetime;
+		public AnimationCurve alphaOverLifetime;
 
 		[Range(0.0f, 20f)]
-		public float SizeMinX = 0.75f;
+		public float sizeMinX = 0.75f;
 		[Range(0.0f, 20f)]
-		public float SizeMaxX = 0.75f;
-		public AnimationCurve TrailWidth;
+		public float sizeMaxX = 0.75f;
+		public AnimationCurve trailWidth;
 
 		[Range(0.0f, 200.0f)]
-		public float DistortionValue;
-		public AnimationCurve DistortionOverLifetime;
+		public float distortionValue;
+		public AnimationCurve distortionOverLifetime;
 
 		[Range(0.0f, 2.0f)]
-		public float ReliefValue;
-		public AnimationCurve ReliefOverLifetime;
+		public float reliefValue;
+		public AnimationCurve reliefOverLifetime;
 
 		[Range(0.0f, 20.0f)]
-		public float Blur;
-		public AnimationCurve BlurOverLifetime;
+		public float blur;
+		public AnimationCurve blurOverLifetime;
 
-		public Texture BloomTexture;
+		public Texture bloomTexture;
 
 		[Range(0.0f, 20.0f)]
-		public float Bloom;
-		public AnimationCurve BloomOverLifetime;
+		public float bloom;
+		public AnimationCurve bloomOverLifetime;
 
 		[Range(0f, 20.0f)]
-		public float Amplitude = 5f;
+		public float amplitude = 5f;
 
 		[Range(0f, 10.0f)]
-		public float Smooth = 5f;
+		public float smooth = 5f;
 
 		[Range(0f, 60.0f)]
 		public float fluctuationRateMin = 5f;
@@ -76,13 +76,12 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
 		public float fluctuationRateMax = 5f;
 
 		[Range(-20f, 20f)]
-		public float InitialVelocity = 0.0f;
+		public float initialVelocity;
 
 		[Range(-5f, 5f)]
-		public float AccelerationMin = 0.06f;
+		public float accelerationMin = 0.06f;
 
 		[Range(-5f, 5f)]
-		public float AccelerationMax = 0.2f;
-
+		public float accelerationMax = 0.2f;
 	}
 }

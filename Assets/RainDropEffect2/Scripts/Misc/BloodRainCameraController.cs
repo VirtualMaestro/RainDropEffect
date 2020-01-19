@@ -64,19 +64,19 @@ namespace RainDropEffect2.Scripts.Misc
 
 			if (this.HP == 100)
 			{
-				FrameBloodCamera.Alpha = 0f;
+				FrameBloodCamera.alpha = 0f;
 			}
 			else if (this.HP >= 70) 
 			{
-				FrameBloodCamera.Alpha = currentAlpha * LerpTime (lerpTime) * hpHigh.Evaluate (timeElapsed);
+				FrameBloodCamera.alpha = currentAlpha * LerpTime (lerpTime) * hpHigh.Evaluate (timeElapsed);
 			} 
 			else if (this.HP >= 20) 
 			{
-				FrameBloodCamera.Alpha = currentAlpha * LerpTime (lerpTime) * hpMid.Evaluate (timeElapsed);
+				FrameBloodCamera.alpha = currentAlpha * LerpTime (lerpTime) * hpMid.Evaluate (timeElapsed);
 			} 
 			else
 			{
-				FrameBloodCamera.Alpha = currentAlpha * LerpTime (lerpTime) * hpLow.Evaluate (timeElapsed);
+				FrameBloodCamera.alpha = currentAlpha * LerpTime (lerpTime) * hpLow.Evaluate (timeElapsed);
 			}
 		}
 

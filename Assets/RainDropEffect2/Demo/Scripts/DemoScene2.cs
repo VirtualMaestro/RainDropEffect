@@ -66,9 +66,9 @@ public class DemoScene2 : MonoBehaviour {
 	{
 		bloodRainController.Reset ();
 		// You can stop and clear effects by Refresh ()
-		splashInRain.StopImmidiate ();
-		splashOutRain.StopImmidiate();
-		frozenRain.StopImmidiate();
+		splashInRain.StopImmediate ();
+		splashOutRain.StopImmediate();
+		frozenRain.StopImmediate();
 		splashInAudio.Stop ();
 		splashOutAudio.Stop ();
 		damageAudio.Stop ();
@@ -156,7 +156,7 @@ public class DemoScene2 : MonoBehaviour {
 
 		if (playMode == PlayMode.Frozen) 
 		{
-			frozenRain.Alpha = frozenValue;
+			frozenRain.alpha = frozenValue;
 			GUILayout.Label ("Frozen Value (Sliding right to freeze)");
 			frozenValue = GUILayout.HorizontalSlider (frozenValue, 0f, 1f, GUILayout.Height (40));
 			windAudio.volume = frozenValue;

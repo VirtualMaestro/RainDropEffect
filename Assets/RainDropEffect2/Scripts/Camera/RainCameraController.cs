@@ -9,260 +9,189 @@ namespace RainDropEffect2.Scripts.Camera
 {
 	[ExecuteInEditMode]
 	public class RainCameraController : MonoBehaviour {
+		private static readonly Color Blue01 = new Color(0f, 0.1f, 0.7f, 0.1f);
+		private static readonly Color Blue08 = new Color(0f, 0.1f, 0.7f, 0.8f);
 
-		#region [ Internal Variables ]
+		private UnityEngine.Camera _cam;
+		private UnityEngine.Camera Camera => _cam == null ? (_cam = GetComponent<UnityEngine.Camera> ()) : _cam;
 
-		UnityEngine.Camera _cam;
-		UnityEngine.Camera cam 
-		{
-			get { 
-				if (_cam == null)
-					_cam = GetComponent<UnityEngine.Camera> ();
-				return _cam;
-			}
-		}
+		private List <RainBehaviourBase> _rainBehaviours;
 
-		List <RainBehaviourBase> _rainBehaviours;
-		public List <RainBehaviourBase> rainBehaviours
-		{
-			get
-			{ 
-				if (_rainBehaviours == null) 
-				{
-					_rainBehaviours = GetComponentsInChildren <RainBehaviourBase> (false).ToList ();
-				}
-				return _rainBehaviours;
-			}
-		}
-
-		#endregion
-
-
-		#region [ Public Variables ]
+		private List<RainBehaviourBase> RainBehaviours => _rainBehaviours ?? (_rainBehaviours = GetComponentsInChildren<RainBehaviourBase>(false).ToList());
 
 		/// <summary>
 		/// The render queue.
 		/// </summary>
-
-		public int RenderQueue = 3000;
-
+		[SerializeField]
+		private int renderQueue = 3000;
 
 		/// <summary>
 		/// The alpha.
 		/// </summary>
-
 		[Range (0f, 1f)]
-		public float Alpha = 1f;
-
+		public float alpha = 1f;
 
 		/// <summary>
 		/// The global wind.
 		/// </summary>
-
-		public Vector2 GlobalWind = Vector3.zero;
-
+		[SerializeField]
+		private Vector2 globalWind = Vector3.zero;
 
 		/// <summary>
 		/// Gravity vector
 		/// </summary>
+		[SerializeField]
+		public Vector3 gForceVector = Vector3.down;
 
-		public Vector3 GForceVector = Vector3.down;
+		[SerializeField]
+		private RainDropTools.RainDropShaderType shaderType;
 
+		[SerializeField]
+		[Range(0.02f, 10f)]
+		private float distance = 8.3f;
+
+		[SerializeField]
+		public bool vrMode;
 
 		/// <summary>
 		/// Gets the current draw call.
 		/// </summary>
 		/// <value>The current draw call.</value>
-
-		public int CurrentDrawCall 
-		{
-			get 
-			{
-				return rainBehaviours.Select (x => x.CurrentDrawCall).Sum ();
-			}
-		}
+		public int CurrentDrawCall => RainBehaviours.Select(x => x.CurrentDrawCall).Sum();
 
 		/// <summary>
 		/// Gets the max draw call.
 		/// </summary>
 		/// <value>The max draw call.</value>
-
-		public int MaxDrawCall
-		{
-			get
-			{ 
-				return rainBehaviours.Select (x => x.MaxDrawCall).Sum ();
-			}
-		}
+		public int MaxDrawCall => RainBehaviours.Select (x => x.MaxDrawCall).Sum ();
 
 		/// <summary>
 		/// Gets a value indicating whether this instance is playing.
 		/// </summary>
 		/// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
+		public bool IsPlaying => RainBehaviours.FindAll (x => x.IsPlaying).Count != 0;
 
-		public bool IsPlaying {
-			get 
+		private void Awake ()
+		{
+			foreach (var beh in RainBehaviours)
 			{
-				return rainBehaviours.FindAll (x => x.IsPlaying).Count != 0;
+				beh.StopRainImmediate ();
 			}
 		}
 
-		public RainDropTools.RainDropShaderType ShaderType;
-
-		[Range(0.02f, 10f)]
-		public float distance = 8.3f;
-
-		public bool VRMode = false;
-
-		#endregion
-
-
-		/// <summary>
-		/// Unity's awake
-		/// </summary>
-
-		void Awake ()
+		private void Start () 
 		{
-			foreach (var beh in rainBehaviours)
-			{
-				beh.StopRainImmidiate ();
-			}
+			if (Camera != null) return;
+			Debug.LogError ("You must add component (Camera)");
 		}
 
-
-		/// <summary>
-		/// Unity's start
-		/// </summary>
-
-		void Start () 
+		private void Update () 
 		{
-			if (cam == null)
-			{
-				Debug.LogError ("You must add component (Camera)");
-				return;
-			}
-		}
-
-
-		/// <summary>
-		/// Unity's Update
-		/// </summary>
-
-		void Update () 
-		{
-			if (cam == null)
-				return;
+			if (Camera == null) return;
         
-			cam.orthographic = !VRMode;
-			cam.orthographicSize = 5f;
-			cam.nearClipPlane = 0.01f;
-			cam.farClipPlane = distance + 0.01f;
+			Camera.orthographic = !vrMode;
+			Camera.orthographicSize = 5f;
+			Camera.nearClipPlane = 0.01f;
+			Camera.farClipPlane = distance + 0.01f;
 
-			if (transform.childCount != _rainBehaviours.Count ()) 
-			{
-				_rainBehaviours = null;
-			}
-			rainBehaviours.Sort ((a, b) => a.Depth - b.Depth);
+			if (transform.childCount != _rainBehaviours.Count) _rainBehaviours = null; 
+				
+			RainBehaviours.Sort ((a, b) => a.Depth - b.Depth);
+
 			int cnt = 0;
-			int behIndex = 0;
-			foreach (var beh in rainBehaviours)
+			
+			foreach (var beh in RainBehaviours)
 			{
-				beh.transform.localRotation = Quaternion.Euler(Vector3.zero);
-				beh.transform.localScale = Vector3.one;
+				var rainTransform = beh.transform;
+				rainTransform.localRotation = Quaternion.Euler(Vector3.zero);
+				rainTransform.localScale = Vector3.one;
+				
 				if (Application.isPlaying)
 				{
-					var frustumHeight = 2.0f * distance * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
-					var frustumWidth = frustumHeight * cam.aspect;
-					cam.orthographicSize = frustumHeight * .5f;
-					beh.transform.localPosition = Vector3.forward * distance;
-					//beh.transform.localPosition = new Vector3(0f, 0f, 0.0001f * behIndex);
+					var frustumHeight = 2.0f * distance * Mathf.Tan(Camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+					Camera.orthographicSize = frustumHeight * .5f;
+					rainTransform.localPosition = Vector3.forward * distance;
 				}
 				else
 				{
-					beh.transform.localPosition = Vector3.zero;
+					rainTransform.localPosition = Vector3.zero;
 				}
-				beh.ShaderType = this.ShaderType;
-				beh.VRMode = this.VRMode;
-				beh.Distance = this.distance;
-				beh.ApplyFinalDepth (RenderQueue + cnt);
-				beh.ApplyGlobalWind (GlobalWind);
-				beh.GForceVector = this.GForceVector;
-				beh.Alpha = this.Alpha;
+				
+				beh.ShaderType = shaderType;
+				beh.VRMode = vrMode;
+				beh.Distance = distance;
+				beh.ApplyFinalDepth (renderQueue + cnt);
+				beh.ApplyGlobalWind (globalWind);
+				beh.GForceVector = gForceVector;
+				beh.Alpha = alpha;
 				cnt += beh.MaxDrawCall;
-				behIndex += 1;
 			}
 		}
-
 
 		/// <summary>
 		/// You can call this when you want to redraw rain
 		/// </summary>
-
 		public void Refresh ()
 		{
-			foreach (var beh in rainBehaviours)
+			foreach (var beh in RainBehaviours)
 			{
-				beh.StopRainImmidiate ();
+				beh.StopRainImmediate ();
 			}
+			
 			_rainBehaviours = GetComponentsInChildren <RainBehaviourBase> (false).ToList ();
-			foreach (var beh in rainBehaviours)
+			
+			foreach (var beh in RainBehaviours)
 			{
 				beh.Refresh ();
 			}
 		}
 
-
 		/// <summary>
 		/// Starts the rain increasingly.
 		/// </summary>
-
 		public void Play ()
 		{
-			foreach (var beh in rainBehaviours)
+			foreach (var beh in RainBehaviours)
 			{
 				beh.StartRain ();
 			}
 		}
 
-
 		/// <summary>
 		/// Stops the rain gradually.
 		/// </summary>
-
 		public void Stop () 
 		{
-			foreach (var beh in rainBehaviours)
+			foreach (var beh in RainBehaviours)
 			{
 				beh.StopRain ();
 			}
 		}
 
-
 		/// <summary>
-		/// Stops the rain immidiately.
+		/// Stops the rain immediately.
 		/// </summary>
-
-		public void StopImmidiate () 
+		public void StopImmediate () 
 		{
-			foreach (var beh in rainBehaviours)
+			foreach (var beh in RainBehaviours)
 			{
-				beh.StopRainImmidiate ();
+				beh.StopRainImmediate ();
 			}
 		}
 
-
 		private void OnDrawGizmos()
 		{
-			if (cam == null)
-				return;
+			if (Camera == null) return;
 
-			float h = cam.orthographicSize * 2f;
-			float w = h * cam.aspect;
+			float h = Camera.orthographicSize * 2f;
+			float w = h * Camera.aspect;
 
-			Gizmos.color = new Color(0f, 0.1f, 0.7f, 0.1f);
-			Gizmos.DrawCube(transform.position, new Vector3(w, h, cam.farClipPlane - cam.nearClipPlane));
-			Gizmos.color = new Color(0f, 0.1f, 0.7f, 0.8f);
-			Gizmos.DrawWireCube(transform.position, new Vector3(w, h, cam.farClipPlane - cam.nearClipPlane));
+			var position = transform.position;
+			Gizmos.color = Blue01;
+			Gizmos.DrawCube(position, new Vector3(w, h, Camera.farClipPlane - Camera.nearClipPlane));
+			
+			Gizmos.color = Blue08;
+			Gizmos.DrawWireCube(position, new Vector3(w, h, Camera.farClipPlane - Camera.nearClipPlane));
 		}
 	}
 }

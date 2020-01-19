@@ -131,7 +131,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 		}
 
 
-		public override void StopRainImmidiate ()
+		public override void StopRainImmediate ()
 		{
 			if (rainController == null)
 			{

@@ -1,282 +1,247 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-#if !UNITY_5_5_OR_NEWER
-public enum LineTextureMode
-{
-    Stretch,
-    Tile,
-}
-#endif
-
 namespace RainDropEffect2.Scripts.Common
 {
-	public class DropTrail : MonoBehaviour
-	{
-		[System.Serializable]
-		class Path
-		{
-			public float timeCreated = 0;
-			public float timeElapsed
-			{
-				get { return Time.time - timeCreated; }
-			}
-			public float fadeAlpha = 0;
-			public Vector3 localPosition = Vector3.zero;
-			public Quaternion localRotation = Quaternion.identity;
-			public Path(Vector3 localPosition, Quaternion localRotation)
-			{
-				this.localPosition = localPosition;
-				this.localRotation = localRotation;
-				timeCreated = Time.time;
-			}
-		}
+    public class DropTrail : MonoBehaviour
+    {
+        private const string Name = "[Hidden]DropTrailMesh";
 
-		public bool enabled = true;
-		public Material material;
-		public float lifeTime = 3f;
-		public AnimationCurve widthCurve;
-		public float widthMultiplier = .5f;
-		public int angleDivisions = 10;
-		public float vertexDistance = .5f;
-		public LineTextureMode textureMode;
+        public new bool enabled = true;
+        public Material material;
+        public float lifeTime = 3f;
+        public AnimationCurve widthCurve;
+        public float widthMultiplier = .5f;
+        public int angleDivisions = 10;
+        public float vertexDistance = .5f;
+        public LineTextureMode textureMode;
 
+        private GameObject _trail;
+        private Vector3 _relativePos;
+        private MeshFilter _meshFilter;
+        private MeshRenderer _meshRenderer;
 
-		const string _name = "[Hidden]DropTrailMesh";
+        private Mesh Mesh
+        {
+            get => _meshFilter.mesh;
+            set => _meshFilter.mesh = value;
+        }
 
-		[HideInInspector]
-		GameObject _trail;
+        [SerializeField] private List<Path> paths = new List<Path>();
 
-		[HideInInspector]
-		Vector3 _relativePos;
+        // Use this for initialization
+        private void Awake()
+        {
+            CheckExistence();
+        }
 
-		[HideInInspector]
-		MeshFilter _meshFilter;
+        // Update is called once per frame
+        private void Update()
+        {
+            if (!CheckExistence() || !CheckActive()) return;
 
-		[HideInInspector]
-		MeshRenderer _meshRenderer;
+            UpdateTrail();
+            UpdateMesh();
+        }
 
-		Mesh _mesh
-		{
-			get { return _meshFilter.mesh; }
-			set { _meshFilter.mesh = value; }
-		}
+        public void Clear()
+        {
+            paths.Clear();
+        }
 
-		[SerializeField]
-		List<Path> paths = new List<Path>();
-		int pathCnt { 
-			get { return paths.Count(); } 
-		}
+        private bool CheckExistence()
+        {
+            if (!_trail)
+            {
+                Transform oldTrail = transform.Find(Name);
 
+                if (oldTrail)
+                {
+                    _trail = oldTrail.gameObject;
+                    _meshFilter = _trail.GetComponent<MeshFilter>();
+                    _meshRenderer = _trail.GetComponent<MeshRenderer>();
+                }
+                else
+                {
+                    _trail = RainDropTools.CreateHiddenObject(Name, this.transform).gameObject;
+                }
+            }
 
-		// Use this for initialization
-		void Awake()
-		{
-			CheckExistence();
-		}
+            if (!_meshFilter)
+            {
+                _meshFilter = _trail.AddComponent<MeshFilter>();
+            }
 
+            if (!_meshRenderer)
+            {
+                _meshRenderer = _trail.AddComponent<MeshRenderer>();
+            }
 
-		// Update is called once per frame
-		void Update()
-		{
-			if (!CheckExistence())
-				return;
+            if (material == null) return false;
 
-			if (!CheckActive ()) 
-				return;
+            _meshRenderer.material = material;
 
-			UpdateTrail();
-			UpdateMesh();
-		}
+            return true;
+        }
 
+        bool CheckActive()
+        {
+            _meshRenderer.enabled = enabled;
+            return enabled;
+        }
 
-		public void Clear()
-		{
-			paths.Clear ();
-		}
+        private void UpdateTrail()
+        {
+            // Remove all expires
+            paths.RemoveAll(t => t.TimeElapsed >= lifeTime);
 
+            var localPosition = transform.localPosition;
+            var localRotation = transform.localRotation;
 
-		bool CheckExistence()
-		{
-			if (!_trail) {
-				Transform oldTrail = transform.Find (_name);
-				if (oldTrail)
-				{
-					_trail = oldTrail.gameObject;
-					_meshFilter = _trail.GetComponent<MeshFilter>();
-					_meshRenderer = _trail.GetComponent<MeshRenderer>();
-				} 
-				else 
-				{
-					_trail = RainDropTools.CreateHiddenObject (_name, this.transform).gameObject;
-				}
-			}
+            switch (paths.Count)
+            {
+                case 0:
+                    paths.Add(new Path(localPosition, localRotation));
+                    paths.Add(new Path(localPosition, localRotation));
 
-			if (!_meshFilter) 
-			{
-				_meshFilter = _trail.AddComponent<MeshFilter>();
-			}
+                    _relativePos = localPosition;
+                    break;
+                case 1:
+                    paths.Add(new Path(localPosition, localRotation));
+                    _relativePos = localPosition;
+                    break;
+            }
 
-			if (!_meshRenderer) 
-			{
-				_meshRenderer = _trail.AddComponent<MeshRenderer>();
-			}
+            // Add if needed
+            var distSqr = (paths[0].localPosition - localPosition).sqrMagnitude;
+            if (distSqr < vertexDistance) return;
 
-			if (material == null) 
-			{
-				return false;
-			}
-			else
-			{
-				_meshRenderer.material = material;
-			}
+            Vector3 vec1 = paths[0].localPosition - paths[1].localPosition;
+            Vector3 vec2 = transform.localPosition - paths[0].localPosition;
 
-			return true;
-		}
+            Quaternion qv1 = Quaternion.identity;
+            Quaternion qv2 = Quaternion.identity;
 
+            if (Math.Abs(vec1.magnitude) > 0.0001)
+                qv1 = Quaternion.LookRotation(vec1, Vector3.forward);
 
-		bool CheckActive()
-		{
-			_meshRenderer.enabled = enabled;
-			return enabled;
-		}
+            if (Math.Abs(vec2.magnitude) > 0.0001)
+                qv2 = Quaternion.LookRotation(vec2, Vector3.forward);
 
+            qv1.eulerAngles += Vector3.forward * -90f;
+            qv2.eulerAngles += Vector3.forward * -90f;
 
-		void UpdateTrail()
-		{
-			// Remove all expireds
-			paths.RemoveAll(t => t.timeElapsed >= lifeTime);
+            if (paths.Count >= 2)
+            {
+                //Get the dot product
+                float dot = Vector3.Dot(vec1, vec2);
+                dot = dot / (vec1.magnitude * vec2.magnitude);
+                float acos = Mathf.Acos(dot);
+                float angle = acos * 180f / Mathf.PI;
 
-			// Add paths
-			if (pathCnt == 0)
-			{
-				paths.Add(new Path(transform.localPosition, transform.localRotation));
-				paths.Add(new Path(transform.localPosition, transform.localRotation));
-				_relativePos = transform.localPosition;
-			}
+                if (!float.IsNaN(angle))
+                {
+                    int angleResol = (int) angle / angleDivisions;
+                    for (int j = 0; j < angleResol; j++)
+                    {
+                        Quaternion q = Quaternion.Slerp(qv1, qv2, j / (float) angleResol);
+                        paths.Insert(0, new Path(paths[0].localPosition, q));
+                    }
+                }
+            }
 
-			if (pathCnt == 1) {
-				paths.Add(new Path(transform.localPosition, transform.localRotation));
-				_relativePos = transform.localPosition;
-			}
+            _relativePos = vec2;
+            paths.Insert(0, new Path(transform.localPosition, qv2));
+        }
 
-			// Add if needed
-			float distSqr = (paths[0].localPosition - this.transform.localPosition).sqrMagnitude;
-			if (distSqr < vertexDistance) 
-			{
-				return;
-			}
+        void UpdateMesh()
+        {
+            if (paths.Count <= 1)
+            {
+                _meshRenderer.enabled = false;
+                return;
+            }
 
-			Vector3 vec1 = paths[0].localPosition - paths[1].localPosition;
-			Vector3 vec2 = transform.localPosition - paths[0].localPosition;
+            _meshRenderer.enabled = true;
 
-			Quaternion qv1 = Quaternion.identity;
-			Quaternion qv2 = Quaternion.identity;
+            Vector3[] verts = new Vector3[paths.Count * 2];
+            Vector2[] uvs = new Vector2[paths.Count * 2];
+            int[] tris = new int[(paths.Count - 1) * 6];
 
-			if(vec1.magnitude != 0f)
-				qv1 = Quaternion.LookRotation(vec1, Vector3.forward);
-			if(vec2.magnitude != 0f)
-				qv2 = Quaternion.LookRotation(vec2, Vector3.forward);
+            for (int i = 0; i < paths.Count; i++)
+            {
+                float progress = i / (float) paths.Count();
+                Path p = paths[i];
+                _trail.transform.parent = transform.parent;
+                _trail.transform.localPosition = p.localPosition;
+                _trail.transform.localRotation = p.localRotation;
 
-			qv1.eulerAngles += Vector3.forward * -90f;
-			qv2.eulerAngles += Vector3.forward * -90f;
+                float w = Mathf.Max(widthMultiplier * widthCurve.Evaluate(progress) * 0.5f, 0.001f);
+                verts[i * 2] = _trail.transform.TransformPoint(0, w, 0);
+                verts[(i * 2) + 1] = _trail.transform.TransformPoint(0, -w, 0);
 
-			if (paths.Count() >= 2)
-			{
-				//Get the dot product
-				float dot = Vector3.Dot(vec1, vec2);
-				dot = dot / (vec1.magnitude * vec2.magnitude);
-				float acos = Mathf.Acos(dot);
-				float angle = acos * 180f / Mathf.PI;
-				if (!float.IsNaN(angle))
-				{
-					int angleResol = (int)angle / angleDivisions;
-					for (int j = 0; j < angleResol; j++)
-					{
-						Quaternion q = Quaternion.Slerp(qv1, qv2, j / (float)angleResol);
-						paths.Insert(0, new Path(paths[0].localPosition, q));
-					}
-				}
-			}
-			_relativePos = vec2;
-			paths.Insert(0, new Path(transform.localPosition, qv2));
-		}
+                float uvRatio = progress;
+                if (textureMode == LineTextureMode.Tile)
+                {
+                    uvRatio = i;
+                }
 
+                uvs[i * 2] = new Vector2(uvRatio, 0f);
+                uvs[(i * 2) + 1] = new Vector2(uvRatio, 1f);
 
-		void UpdateMesh()
-		{
-			if (pathCnt <= 1) 
-			{
-				_meshRenderer.enabled = false;
-				return;
-			}
+                if (i != 0)
+                {
+                    tris[((i - 1) * 6) + 0] = (i * 2) - 2;
+                    tris[((i - 1) * 6) + 1] = (i * 2) - 1;
+                    tris[((i - 1) * 6) + 2] = (i * 2) - 0;
+                    tris[((i - 1) * 6) + 3] = (i * 2) + 1;
+                    tris[((i - 1) * 6) + 4] = (i * 2) + 0;
+                    tris[((i - 1) * 6) + 5] = (i * 2) - 1;
+                }
 
-			_meshRenderer.enabled = true;
+                _trail.transform.parent = null;
+            }
 
-			Vector3[] verts = new Vector3[pathCnt * 2];
-			Vector2[] uvs = new Vector2[pathCnt * 2];
-			int[] tris = new int[(pathCnt - 1) * 6];
+            Mesh.Clear();
+            Mesh.vertices = verts;
+            Mesh.uv = uvs;
+            Mesh.triangles = tris;
 
-			for (int i = 0; i < pathCnt; i++)
-			{
-				float progress = i / (float)pathCnt;
-				Path p = paths[i];
-				_trail.transform.parent = this.transform.parent;
-				_trail.transform.localPosition = p.localPosition;
-				_trail.transform.localRotation = p.localRotation;
+            _trail.transform.localPosition = Vector3.zero;
+            _trail.transform.localRotation = Quaternion.identity;
+            _trail.transform.localScale = Vector3.one;
 
-				float w = Mathf.Max(widthMultiplier * widthCurve.Evaluate(progress) * 0.5f, 0.001f);
-				verts[i * 2] = _trail.transform.TransformPoint(0, w, 0);
-				verts[(i * 2) + 1] = _trail.transform.TransformPoint(0, -w, 0);
+            _trail.transform.parent = transform;
+        }
 
-				float uvRatio = progress;
-				if (textureMode == LineTextureMode.Tile)
-				{
-					uvRatio = i;
-				}
-				uvs[i * 2] = new Vector2(uvRatio, 0f);
-				uvs[(i * 2) + 1] = new Vector2(uvRatio, 1f);
+        void OnDrawGizmos()
+        {
+            if (_relativePos == Vector3.zero) return;
+            Vector3 fwd1 = transform.TransformPoint(0f, 0f, 0f);
+            Vector3 fwd2 = transform.TransformPoint(_relativePos);
+            Vector3 fwd = fwd2 - fwd1;
 
-				if (i != 0)
-				{
-					tris[((i - 1) * 6) + 0] = (i * 2) - 2;
-					tris[((i - 1) * 6) + 1] = (i * 2) - 1;
-					tris[((i - 1) * 6) + 2] = (i * 2) - 0;
-					tris[((i - 1) * 6) + 3] = (i * 2) + 1;
-					tris[((i - 1) * 6) + 4] = (i * 2) + 0;
-					tris[((i - 1) * 6) + 5] = (i * 2) - 1;
-				}
+            var position = transform.position;
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(position, position + fwd.normalized * 2f);
+        }
+    }
 
-				_trail.transform.parent = null;
-			}
+    [Serializable]
+    internal class Path
+    {
+        public float timeCreated;
+        public float TimeElapsed => Time.time - timeCreated;
+        public Vector3 localPosition;
+        public Quaternion localRotation;
 
-			_mesh.Clear();
-			_mesh.vertices = verts;
-			_mesh.uv = uvs;
-			_mesh.triangles = tris;
-
-			_trail.transform.localPosition = Vector3.zero;
-			_trail.transform.localRotation = Quaternion.identity;
-			_trail.transform.localScale = Vector3.one;
-
-			_trail.transform.parent = this.transform;
-		}
-
-
-		void OnDrawGizmos()
-		{
-			if(_relativePos != Vector3.zero)
-			{
-				Vector3 fwd1 = transform.TransformPoint(0f, 0f, 0f);
-				Vector3 fwd2 = transform.TransformPoint(_relativePos);
-				Vector3 fwd = fwd2 - fwd1;
-				Gizmos.color = Color.red;
-				Gizmos.DrawLine(
-					transform.position,
-					transform.position + fwd.normalized * 2f
-				);
-			}
-		}
-	}
+        public Path(Vector3 localPosition, Quaternion localRotation)
+        {
+            this.localPosition = localPosition;
+            this.localRotation = localRotation;
+            timeCreated = Time.time;
+        }
+    }
 }

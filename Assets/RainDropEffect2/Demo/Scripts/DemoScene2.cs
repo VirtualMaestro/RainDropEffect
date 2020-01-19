@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using RainDropEffect2.Scripts.Camera;
+using RainDropEffect2.Scripts.Misc;
 
 public class DemoScene2 : MonoBehaviour {
 

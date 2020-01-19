@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using RainDropEffect2.Scripts.Camera;
 
 [CustomEditor (typeof (RainCameraController))]
 public class RainCameraControllerInspector : Editor {

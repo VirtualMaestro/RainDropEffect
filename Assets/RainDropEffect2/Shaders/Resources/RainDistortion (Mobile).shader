@@ -51,7 +51,7 @@
 			
 			v2f vert (a2v v) {
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.texcoord = v.texcoord;
 				o.uvgrab = ComputeGrabScreenPos(o.vertex);
 				o.distort = _Strength * _BackgroundTexture_TexelSize.xy;

@@ -1,273 +1,273 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using RainDropEffect;
+﻿using RainDropEffect2.Scripts.Common;
+using UnityEngine;
 
-[ExecuteInEditMode]
-public class StaticRainBehaviour : RainBehaviourBase {
+namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
+{
+	[ExecuteInEditMode]
+	public class StaticRainBehaviour : RainBehaviourBase {
 
-	#region [ Internal Variables ]
+		#region [ Internal Variables ]
 
-	[HideInInspector]
-	StaticRainController rainController
-	{
-		get;
-		set;
-	}
-
-	#endregion
-
-
-	#region [ Public Variables ]
-
-	/// <summary>
-	/// The variables.
-	/// </summary>
-
-	[SerializeField]
-	public StaticRainVariables Variables;
-
-	/// <summary>
-	/// Gets the current draw call.
-	/// </summary>
-	/// <value>The current draw call.</value>
-
-	public override int CurrentDrawCall 
-	{
-		get 
+		[HideInInspector]
+		StaticRainController rainController
 		{
-			return rainController == null ? 0 : 1;
+			get;
+			set;
 		}
-	}
 
-	/// <summary>
-	/// Gets the max draw call.
-	/// </summary>
-	/// <value>The max draw call.</value>
+		#endregion
 
-	public override int MaxDrawCall
-	{
-		get
-		{ 
-			return 1;
-		}
-	}
 
-	/// <summary>
-	/// Gets a value indicating whether this instance is playing.
-	/// </summary>
-	/// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
+		#region [ Public Variables ]
 
-	public override bool IsPlaying {
-		get 
+		/// <summary>
+		/// The variables.
+		/// </summary>
+
+		[SerializeField]
+		public StaticRainVariables Variables;
+
+		/// <summary>
+		/// Gets the current draw call.
+		/// </summary>
+		/// <value>The current draw call.</value>
+
+		public override int CurrentDrawCall 
 		{
-			if (rainController == null) 
+			get 
 			{
-				return false;
-			}
-			else 
-			{
-				return rainController.IsPlaying;
+				return rainController == null ? 0 : 1;
 			}
 		}
-	}
 
-	/// <summary>
-	/// Gets a value indicating whether rain is shown on the screen.
-	/// </summary>
-	/// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
+		/// <summary>
+		/// Gets the max draw call.
+		/// </summary>
+		/// <value>The max draw call.</value>
 
-	public override bool IsEnabled
-	{
-		get
-		{ 
-			return this.Alpha != 0f && this.CurrentDrawCall != 0;
-		}
-	}
-
-	#endregion
-
-
-	public override void Refresh ()
-	{
-		if (rainController != null)
+		public override int MaxDrawCall
 		{
+			get
+			{ 
+				return 1;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is playing.
+		/// </summary>
+		/// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
+
+		public override bool IsPlaying {
+			get 
+			{
+				if (rainController == null) 
+				{
+					return false;
+				}
+				else 
+				{
+					return rainController.IsPlaying;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether rain is shown on the screen.
+		/// </summary>
+		/// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
+
+		public override bool IsEnabled
+		{
+			get
+			{ 
+				return this.Alpha != 0f && this.CurrentDrawCall != 0;
+			}
+		}
+
+		#endregion
+
+
+		public override void Refresh ()
+		{
+			if (rainController != null)
+			{
+				DestroyImmediate (rainController.gameObject);
+				rainController = null;
+			}
+			rainController = CreateController ();
+			rainController.Refresh ();
+			rainController.NoMoreRain = true;
+		}
+
+
+		public override void StartRain ()
+		{
+			if (rainController == null)
+			{
+				rainController = CreateController();
+				rainController.Refresh();
+			}
+			rainController.NoMoreRain = false;
+			rainController.Play();
+		}
+
+
+		public override void StopRain ()
+		{
+			if (rainController == null)
+			{
+				return;
+			}
+			rainController.NoMoreRain = true;
+		}
+
+
+		public override void StopRainImmidiate ()
+		{
+			if (rainController == null)
+			{
+				return;
+			}
 			DestroyImmediate (rainController.gameObject);
 			rainController = null;
+			Refresh(); // Work around TODO: fix initialize bug
 		}
-		rainController = CreateController ();
-		rainController.Refresh ();
-		rainController.NoMoreRain = true;
-	}
 
 
-	public override void StartRain ()
-	{
-        if (rainController == null)
-        {
-            rainController = CreateController();
-            rainController.Refresh();
-        }
-        rainController.NoMoreRain = false;
-        rainController.Play();
-    }
-
-
-	public override void StopRain ()
-	{
-		if (rainController == null)
+		public override void ApplyFinalDepth (int depth)
 		{
-			return;
+			if (rainController == null)
+			{
+				return;
+			}
+			rainController.RenderQueue = depth;
 		}
-		rainController.NoMoreRain = true;
-	}
 
 
-	public override void StopRainImmidiate ()
-	{
-		if (rainController == null)
+		public override void ApplyGlobalWind (Vector2 globalWind)
 		{
-			return;
+			if (rainController == null)
+			{
+				return;
+			}
 		}
-		DestroyImmediate (rainController.gameObject);
-		rainController = null;
-        Refresh(); // Work around TODO: fix initialize bug
-    }
 
 
-    public override void ApplyFinalDepth (int depth)
-	{
-		if (rainController == null)
+		#region [ Internal Methods ]
+
+		/// <summary>
+		/// Unity's Awake
+		/// </summary>
+
+		public override void Awake()
 		{
-			return;
+			if (Application.isPlaying)
+			{
+				Refresh(); // Work around TODO: fix initialize bug
+			}
 		}
-		rainController.RenderQueue = depth;
-	}
 
+		/// <summary>
+		/// Unity's Start
+		/// </summary>
 
-	public override void ApplyGlobalWind (Vector2 globalWind)
-	{
-		if (rainController == null)
+		void Start ()
 		{
-			return;
+			if (Application.isPlaying && Variables.AutoStart) 
+			{
+				this.StartRain ();
+			}
 		}
-	}
 
+		/// <summary>
+		/// Unity's update
+		/// </summary>
 
-    #region [ Internal Methods ]
-
-    /// <summary>
-    /// Unity's Awake
-    /// </summary>
-
-    public override void Awake()
-    {
-        if (Application.isPlaying)
-        {
-            Refresh(); // Work around TODO: fix initialize bug
-        }
-    }
-
-    /// <summary>
-    /// Unity's Start
-    /// </summary>
-
-	void Start ()
-	{
-        if (Application.isPlaying && Variables.AutoStart) 
+		public override void Update ()
 		{
-			this.StartRain ();
-		}
-	}
+			InitParams ();
 
-	/// <summary>
-	/// Unity's update
-	/// </summary>
+			if (rainController == null)
+			{
+				return;
+			}
 
-	public override void Update ()
-	{
-		InitParams ();
-
-		if (rainController == null)
-		{
-			return;
+			rainController.ShaderType = this.ShaderType;
+			rainController.Alpha = this.Alpha;
+			rainController.VRMode = this.VRMode;
+			rainController.UpdateController ();
 		}
 
-        rainController.ShaderType = this.ShaderType;
-		rainController.Alpha = this.Alpha;
-        rainController.VRMode = this.VRMode;
-		rainController.UpdateController ();
-	}
 
-
-	/// <summary>
-	/// Creates the controller.
-	/// </summary>
+		/// <summary>
+		/// Creates the controller.
+		/// </summary>
 	
-	StaticRainController CreateController ()
-	{
-		Transform tr = RainDropTools.CreateHiddenObject ("Controller", this.transform);
-		StaticRainController con = tr.gameObject.AddComponent <StaticRainController> ();
-		con.Variables = Variables;
-		con.Alpha = 0f;
-		con.NoMoreRain = false;
-		con.camera = GetComponentInParent<Camera> ();
-		return con;
-	}
+		StaticRainController CreateController ()
+		{
+			Transform tr = RainDropTools.CreateHiddenObject ("Controller", this.transform);
+			StaticRainController con = tr.gameObject.AddComponent <StaticRainController> ();
+			con.Variables = Variables;
+			con.Alpha = 0f;
+			con.NoMoreRain = false;
+			con.camera = GetComponentInParent<UnityEngine.Camera> ();
+			return con;
+		}
 
-	/// <summary>
-	/// (Internal) Initialize inspector params
-	/// </summary>
+		/// <summary>
+		/// (Internal) Initialize inspector params
+		/// </summary>
 
-	public void InitParams ()
-	{
-		if (Variables == null)
-			return;
-	}
+		public void InitParams ()
+		{
+			if (Variables == null)
+				return;
+		}
 
-    #endregion
+		#endregion
 
 
 #if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        Camera rainCam = GetComponentInParent<Camera>();
+		private void OnDrawGizmos()
+		{
+			UnityEngine.Camera rainCam = GetComponentInParent<UnityEngine.Camera>();
 
-        if (rainCam == null)
-            return;
+			if (rainCam == null)
+				return;
 
-        if (rainController != null)
-        {
-            if (rainController.staticDrawer.currentState == StaticRainController.DrawState.Playing)
-                Gizmos.color = new Color(0.6f, 0.0f, 0.1f, 1f);
-            else
-                Gizmos.color = new Color(1f, 1f, 1f, 0.4f);
+			if (rainController != null)
+			{
+				if (rainController.staticDrawer.currentState == StaticRainController.DrawState.Playing)
+					Gizmos.color = new Color(0.6f, 0.0f, 0.1f, 1f);
+				else
+					Gizmos.color = new Color(1f, 1f, 1f, 0.4f);
 
-            Gizmos.DrawWireCube(rainController.staticDrawer.transform.position, new Vector3(1f, 1f, 0f));
-        }
+				Gizmos.DrawWireCube(rainController.staticDrawer.transform.position, new Vector3(1f, 1f, 0f));
+			}
 
-        if (UnityEditor.Selection.Contains(gameObject))
-        {
-            float h = rainCam.orthographicSize * 2f;
-            float w = h * rainCam.aspect;
-            Vector3 p = transform.position - (Vector3.up * h * Variables.SpawnOffsetY) - (Vector3.right * w * Variables.SpawnOffsetX);
+			if (UnityEditor.Selection.Contains(gameObject))
+			{
+				float h = rainCam.orthographicSize * 2f;
+				float w = h * rainCam.aspect;
+				Vector3 p = transform.position - (Vector3.up * h * Variables.SpawnOffsetY) - (Vector3.right * w * Variables.SpawnOffsetX);
 
-            Vector3 size = new Vector3(
-                 Variables.SizeX*2f,
-                 Variables.SizeY*2f,
-                 1f
-             );
-            if (Variables.FullScreen)
-            {
-                size = new Vector3(w, h, 1f);
-            }
+				Vector3 size = new Vector3(
+					Variables.SizeX*2f,
+					Variables.SizeY*2f,
+					1f
+				);
+				if (Variables.FullScreen)
+				{
+					size = new Vector3(w, h, 1f);
+				}
 
-            Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.8f);
-            Gizmos.DrawWireCube(p, new Vector3(size.x, size.y, rainCam.nearClipPlane - rainCam.nearClipPlane + 0.1f));
-            Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.2f);
-            Gizmos.DrawCube(p, new Vector3(size.x, size.y, rainCam.farClipPlane - rainCam.nearClipPlane + 0.1f));
-        }
-    }
+				Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.8f);
+				Gizmos.DrawWireCube(p, new Vector3(size.x, size.y, rainCam.nearClipPlane - rainCam.nearClipPlane + 0.1f));
+				Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.2f);
+				Gizmos.DrawCube(p, new Vector3(size.x, size.y, rainCam.farClipPlane - rainCam.nearClipPlane + 0.1f));
+			}
+		}
 #endif
+	}
 }

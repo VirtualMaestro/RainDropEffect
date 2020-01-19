@@ -3,12 +3,13 @@ Shader "RainDrop/Internal/RainDistortion (Forward)" {
 	Properties {
 		_Color ("Main Color", COLOR) = (1,1,1,1)
 		_Strength ("Distortion Strength", Range(0.0, 550.0)) = 50.0
-		//_HeightOffset ("Height Offset", Range(0.0, 1.0)) = 0.0
 		_Relief ("Relief Value", Range(0.0, 2.0)) = 1.5
 		_Distortion ("Normalmap", 2D) = "black" {}
 		_ReliefTex ("Relief", 2D) = "black" {}
+		_BloomTex("Bloomtex", 2D) = "black" {}
 		_Blur ("Blur", Range(0.0, 50.0)) = 3.0
 		_Darkness ("Darkness", Range(0.0, 100.0)) = 10.0
+		_Bloom ("Bloom", Range(0.0, 100.0)) = 0.0
 	}
 
 	SubShader {
@@ -41,16 +42,16 @@ Shader "RainDrop/Internal/RainDistortion (Forward)" {
 			half4 _GrabTexture_TexelSize;
 			fixed4 _Color;
 			sampler2D _ReliefTex;
+			sampler2D _BloomTex;
 		 	half _Strength;
-		 	//float _HeightOffset;
 			half _Relief;
 			half _Blur;
+			half _Bloom;
 			half _Darkness;
 
 			struct a2v {
 				fixed4 vertex : POSITION;
 				fixed4 color : COLOR;
-				//float3 normal : NORMAL;
 				fixed2 texcoord : TEXCOORD0;
 			};
 				
@@ -61,7 +62,6 @@ Shader "RainDrop/Internal/RainDistortion (Forward)" {
 				half4 uvgrab : TEXCOORD1;
 				half distortion : TEXCOORD2;
 				half dark : TEXCOORD3;
-				//float3 hoff : TEXCOORD2;
 			};
 
 			v2f vert (a2v i) {
@@ -72,14 +72,13 @@ Shader "RainDrop/Internal/RainDistortion (Forward)" {
 				o.uvgrab = ComputeGrabScreenPos(o.vertex);
 				o.distortion = _Strength * _GrabTexture_TexelSize.x;
 				o.dark = _Darkness * _Color.a;
-				//o.hoff = 1.0/(1.0-_HeightOffset);
 				return o;
 			}
 
 			fixed4 frag(v2f i) : COLOR{
 				fixed2 norm = UnpackNormal(tex2D(_Distortion, i.texcoord)).rg;
-				//float hoff = (norm.rg - _HeightOffset) * i.hoff;
 				fixed4 relf = tex2D(_ReliefTex, i.texcoord);
+				fixed4 bloomtex = tex2D(_BloomTex, i.texcoord);
 				relf.a = saturate(relf.r * relf.g * relf.b);
 				i.uvgrab.xy -= i.distortion * norm.rg;
 #ifdef BLUR
@@ -89,7 +88,9 @@ Shader "RainDrop/Internal/RainDistortion (Forward)" {
 #endif
 				col.rgb += (relf.rgb * _Color.rgb) * _Color.a;
 				col.rgb *= saturate (1 - i.dark * relf.a);
-				col.rgb *= (1 - norm.r *_Relief);
+				col.rgb *= (1 - norm.r * _Relief);
+				col.rgb *= (1 - norm.g * _Relief);
+				col.rgb *= (1 + _Bloom * saturate(bloomtex.r * bloomtex.g * bloomtex.b));
 				return col;
 			}
 			ENDCG

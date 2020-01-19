@@ -9,6 +9,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
 		public bool FullScreen = true;
 
 		public Color OverlayColor = Color.gray;
+		[Range(0.0f, 5.0f)]
+		public float Darkness;
+
 		public Texture OverlayTexture;
 		public Texture NormalMap;
 
@@ -35,7 +38,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
 		[Range(0.0f, 2.0f)]
 		public float Blur;
 
-		[Range(0.0f, 5.0f)]
-		public float Darkness;
+		public Texture BloomTexture;
+
+		[Range(0.0f, 20.0f)]
+		public float Bloom;
 	}
 }

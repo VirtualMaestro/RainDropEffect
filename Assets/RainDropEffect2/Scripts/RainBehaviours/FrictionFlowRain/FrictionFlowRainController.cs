@@ -274,6 +274,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                     Variables.OverlayColor,
                     Variables.ReliefValue,
                     Variables.Blur,
+                    Variables.BloomTexture,
+                    Variables.Bloom,
                     Variables.Darkness
                 );
                 dc.Drawer.material = mat;
@@ -440,6 +442,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             float distortionValue = Variables.DistortionValue * Variables.DistortionOverLifetime.Evaluate(progress) * Alpha;
             float reliefValue = Variables.ReliefValue * Variables.ReliefOverLifetime.Evaluate(progress) * Alpha;
             float blurValue = Variables.Blur * Variables.BlurOverLifetime.Evaluate(progress) * Alpha;
+            float bloomValue = Variables.Bloom * Variables.BloomOverLifetime.Evaluate(progress) * Alpha;
             Color overlayColor = new Color(
                 Variables.OverlayColor.r,
                 Variables.OverlayColor.g,
@@ -481,6 +484,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                 overlayColor,
                 reliefValue,
                 blurValue,
+                Variables.BloomTexture,
+                bloomValue,
                 Variables.Darkness * Alpha
             );
             dc.Drawer.enabled = true;

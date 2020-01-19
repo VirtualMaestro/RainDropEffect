@@ -261,6 +261,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
             dc.Drawer.DistortionStrength = Variables.DistortionValue * Variables.DistortionOverLifetime.Evaluate(progress) * Alpha;
             dc.Drawer.ReliefValue = Variables.ReliefValue * Variables.ReliefOverLifetime.Evaluate(progress) * Alpha;
             dc.Drawer.Blur = Variables.Blur * Variables.BlurOverLifetime.Evaluate(progress) * Alpha;
+            dc.Drawer.BloomTexture = Variables.BloomTexture;
+            dc.Drawer.Bloom = Variables.Bloom * Variables.BloomOverLifetime.Evaluate(progress) * Alpha;
             dc.Drawer.Darkness = Variables.Darkness * Alpha;
             dc.transform.localScale = dc.startSize * Variables.SizeOverLifetime.Evaluate(progress);
             // old

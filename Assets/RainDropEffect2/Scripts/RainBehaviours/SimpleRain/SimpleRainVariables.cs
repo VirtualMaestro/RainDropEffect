@@ -9,6 +9,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 		public bool PlayOnce = false;
 
 		public Color OverlayColor = Color.gray;
+		[Range(0.0f, 5.0f)]
+		public float Darkness;
+
 		public Texture NormalMap;
 		public Texture OverlayTexture;
 
@@ -57,9 +60,12 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 		public float Blur;
 		public AnimationCurve BlurOverLifetime;
 
-		public AnimationCurve PosYOverLifetime;
+		public Texture BloomTexture;
 
-		[Range(0.0f, 5.0f)]
-		public float Darkness;
+		[Range(0.0f, 20.0f)]
+		public float Bloom;
+		public AnimationCurve BloomOverLifetime;
+
+		public AnimationCurve PosYOverLifetime;
 	}
 }

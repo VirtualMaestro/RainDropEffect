@@ -9,6 +9,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 		public bool PlayOnce = false;
 
 		public Color OverlayColor = Color.gray;
+		[Range(0.0f, 5.0f)]
+		public float Darkness;
+
 		public Texture NormalMap;
 		public Texture OverlayTexture;
 		public Texture2D FrictionMap;
@@ -55,8 +58,11 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 		public float Blur;
 		public AnimationCurve BlurOverLifetime;
 
-		[Range(0.0f, 5.0f)]
-		public float Darkness;
+		public Texture BloomTexture;
+
+		[Range(0.0f, 20.0f)]
+		public float Bloom;
+		public AnimationCurve BloomOverLifetime;
 
 		[Range(-40f, 40f)]
 		public float InitialVelocity = 0.0f;

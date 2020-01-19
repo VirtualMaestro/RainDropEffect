@@ -82,6 +82,8 @@ namespace RainDropEffect2.Scripts.Common
 			Color? overlayColor=null, 
 			float reliefValue=0f,
 			float blur=0f,
+			Texture bloomTexture=null,
+			float bloom =0f,
 			float darkness=0f
 		) {
 			// Apply shader values
@@ -102,9 +104,11 @@ namespace RainDropEffect2.Scripts.Common
 						material.DisableKeyword("BLUR");
 						material.SetFloat("_Blur", blur);
 					}
+					material.SetFloat("_Bloom", bloom);
 					material.SetFloat("_Darkness", darkness);
 					material.SetTexture("_Distortion", normalMap);
 					material.SetTexture("_ReliefTex", overlayTexture);
+					material.SetTexture("_BloomTex", bloomTexture);
 					break;
 				case RainDropShaderType.Cheap:
 					material.SetFloat("_Strength", distortionValue);

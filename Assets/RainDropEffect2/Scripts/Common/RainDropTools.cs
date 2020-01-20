@@ -153,11 +153,13 @@ namespace RainDropEffect2.Scripts.Common
 		    gameObject = new GameObject ();
 #endif
             gameObject.name = name;
-            gameObject.transform.parent = parent;
-            gameObject.transform.localScale = Vector3.one;
-            gameObject.transform.localPosition = Vector3.zero;
-            gameObject.transform.localRotation = Quaternion.Euler(Vector3.zero);
-            return gameObject.transform;
+            
+            var transform = gameObject.transform;
+            transform.parent = parent;
+            transform.localScale = Vector3.one;
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.Euler(Vector3.zero);
+            return transform;
         }
 
         public static float Random(float min, float max)

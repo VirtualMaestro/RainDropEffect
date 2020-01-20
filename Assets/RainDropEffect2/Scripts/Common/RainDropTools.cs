@@ -16,23 +16,35 @@ namespace RainDropEffect2.Scripts.Common
             Cheap,
             NoDistortion
         }
+        private const float Tolerance = 0.0001f;
 
-        public static string SHADER_FORWARD = "RainDrop/Internal/RainDistortion (Forward)";
-        public static string SHADER_CHEAP = "RainDrop/Internal/RainDistortion (Mobile)";
+        private const string ShaderForward = "RainDrop/Internal/RainDistortion (Forward)";
+        private const string ShaderCheap = "RainDrop/Internal/RainDistortion (Mobile)";
+        private const string ShaderNoDistortion = "RainDrop/Internal/RainNoDistortion";
 
-        public static string SHADER_NO_DISTORTION = "RainDrop/Internal/RainNoDistortion";
-        //public static string SHADER_DEFFERED = "RainDrop/Internal/RainDistortion (Deffered)";
+        // private static string SHADER_DEFFERED = "RainDrop/Internal/RainDistortion (Deffered)";
+
+        private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private static readonly int StrengthId = Shader.PropertyToID("_Strength");
+        private static readonly int ReliefId = Shader.PropertyToID("_Relief");
+        private static readonly int BlurId = Shader.PropertyToID("_Blur");
+        private static readonly int BloomId = Shader.PropertyToID("_Bloom");
+        private static readonly int DarknessId = Shader.PropertyToID("_Darkness");
+        private static readonly int DistortionId = Shader.PropertyToID("_Distortion");
+        private static readonly int ReliefTexId = Shader.PropertyToID("_ReliefTex");
+        private static readonly int BloomTexId = Shader.PropertyToID("_BloomTex");
+        private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
 
         public static string GetShaderName(RainDropShaderType shaderType)
         {
             switch (shaderType)
             {
                 case RainDropShaderType.Expensive:
-                    return SHADER_FORWARD;
+                    return ShaderForward;
                 case RainDropShaderType.Cheap:
-                    return SHADER_CHEAP;
+                    return ShaderCheap;
                 case RainDropShaderType.NoDistortion:
-                    return SHADER_NO_DISTORTION;
+                    return ShaderNoDistortion;
                 default:
                     return "";
             }
@@ -62,46 +74,38 @@ namespace RainDropEffect2.Scripts.Common
             switch (shaderType)
             {
                 case RainDropShaderType.Expensive:
-                    material.SetColor("_Color", overlayColor ?? Color.white);
-                    material.SetFloat("_Strength", distortionValue);
-                    //material.SetFloat("_HeightOffset", 0.5f);
-                    material.SetFloat("_Relief", reliefValue);
-                    if (blur != 0f)
-                    {
-                        material.EnableKeyword("BLUR");
-                        material.SetFloat("_Blur", blur);
-                    }
-                    else
-                    {
-                        material.DisableKeyword("BLUR");
-                        material.SetFloat("_Blur", blur);
-                    }
+                    material.SetColor(ColorId, overlayColor ?? Color.white);
+                    material.SetFloat(StrengthId, distortionValue);
+                    material.SetFloat(ReliefId, reliefValue);
+                    
+                    if (Math.Abs(blur) > Tolerance) material.EnableKeyword("BLUR");
+                    else material.DisableKeyword("BLUR");
 
-                    material.SetFloat("_Bloom", bloom);
-                    material.SetFloat("_Darkness", darkness);
-                    material.SetTexture("_Distortion", normalMap);
-                    material.SetTexture("_ReliefTex", overlayTexture);
-                    material.SetTexture("_BloomTex", bloomTexture);
+                    material.SetFloat(BlurId, blur);
+                    material.SetFloat(BloomId, bloom);
+                    material.SetFloat(DarknessId, darkness);
+                    material.SetTexture(DistortionId, normalMap);
+                    material.SetTexture(ReliefTexId, overlayTexture);
+                    material.SetTexture(BloomTexId, bloomTexture);
                     break;
+                
                 case RainDropShaderType.Cheap:
-                    material.SetFloat("_Strength", distortionValue);
-                    material.SetTexture("_Distortion", normalMap);
+                    material.SetFloat(StrengthId, distortionValue);
+                    material.SetTexture(DistortionId, normalMap);
                     break;
+                
                 case RainDropShaderType.NoDistortion:
-                    material.SetTexture("_MainTex", overlayTexture);
-                    material.SetTexture("_Distortion", normalMap);
-                    material.SetColor("_Color", overlayColor ?? Color.white);
-                    material.SetFloat("_Darkness", darkness);
-                    material.SetFloat("_Relief", reliefValue);
+                    material.SetTexture(MainTexId, overlayTexture);
+                    material.SetTexture(DistortionId, normalMap);
+                    material.SetColor(ColorId, overlayColor ?? Color.white);
+                    material.SetFloat(DarknessId, darkness);
+                    material.SetFloat(ReliefId, reliefValue);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(shaderType), shaderType, null);
             }
         }
 
-
-        /// <summary>
-        /// Creates the quad.
-        /// </summary>
-        /// <returns>The quad.</returns>
         public static Mesh CreateQuadMesh()
         {
             Vector3[] vertices =
@@ -126,7 +130,7 @@ namespace RainDropEffect2.Scripts.Common
                 2, 1, 3
             };
 
-            Mesh mesh = new Mesh
+            var mesh = new Mesh
             {
                 hideFlags = HideFlags.DontSave,
                 name = "Rain Mesh",
@@ -182,16 +186,10 @@ namespace RainDropEffect2.Scripts.Common
             }
         }
 
-
-        /// <summary>
-        /// Get the Camera's Orthographic Size
-        /// </summary>
-        /// <param name="cam"></param>
-        /// <returns></returns>
         public static Vector2 GetCameraOrthographicSize(UnityEngine.Camera cam)
         {
-            float h = cam.orthographicSize * 2f;
-            float w = h * cam.aspect;
+            var h = cam.orthographicSize * 2f;
+            var w = h * cam.aspect;
             return new Vector2(w, h);
         }
 
@@ -205,40 +203,37 @@ namespace RainDropEffect2.Scripts.Common
         /// <returns></returns>
         public static Vector3 GetSpawnLocalPos(Transform parent, UnityEngine.Camera cam, float offsetX, float offsetY)
         {
-            Vector2 camSize = GetCameraOrthographicSize(cam);
-            Vector3 p = new Vector3(
+            var camSize = GetCameraOrthographicSize(cam);
+            var p = new Vector3(
                 Random(-camSize.x / 2f, camSize.x / 2f),
                 Random(-camSize.y / 2f, camSize.y / 2f),
                 0f
             );
+            
             p = cam.transform.rotation * p + parent.position;
             p.x += camSize.x * offsetX;
             p.y += camSize.y * offsetY;
-            Vector3 localPos = parent.InverseTransformPoint(p);
-            return localPos;
+            
+            return parent.InverseTransformPoint(p);
         }
-
 
         /// <summary>
         /// Get the g-forced screen movement
         /// That is to say, we gets the rotation vector that applies gravity
         /// </summary>
-        /// <param name="screenTransform"></param>
-        /// <param name="GForce"></param>
-        /// <returns></returns>
-        public static Vector3 GetGForcedScreenMovement(Transform screenTransform, Vector3 GForce)
+        public static Vector3 GetGForcedScreenMovement(Transform screenTransform, Vector3 gForce)
         {
-            Vector3 projY = Vector3.Project(GForce, screenTransform.up);
-            Vector3 projX = Vector3.Project(GForce, screenTransform.right);
-            Vector3 projZ = Vector3.Project(GForce, screenTransform.forward);
+            var projY = Vector3.Project(gForce, screenTransform.up);
+            var projX = Vector3.Project(gForce, screenTransform.right);
+            var projZ = Vector3.Project(gForce, screenTransform.forward);
 
-            Vector3 relativePointY = screenTransform.InverseTransformPoint(screenTransform.position + projY);
-            Vector3 relativePointX = screenTransform.InverseTransformPoint(screenTransform.position + projX);
-            Vector3 relativePointZ = screenTransform.InverseTransformPoint(screenTransform.position + projZ);
+            var position = screenTransform.position;
+            var relativePointY = screenTransform.InverseTransformPoint(position + projY);
+            var relativePointX = screenTransform.InverseTransformPoint(position + projX);
+            var relativePointZ = screenTransform.InverseTransformPoint(position + projZ);
 
             return new Vector3(relativePointX.x, relativePointY.y, relativePointZ.z);
         }
-
 
         /// <summary>
         /// Get an element from a weighted KeyValuePair list
@@ -255,13 +250,13 @@ namespace RainDropEffect2.Scripts.Common
                 return list.FirstOrDefault();
             }
 
-            float totalweight = (float) list.Sum(t => Convert.ToDouble(t.Value));
-            float choice = Random(0f, totalweight);
+            var totalWeight = (float) list.Sum(t => Convert.ToDouble(t.Value));
+            var choice = Random(0f, totalWeight);
             float sum = 0;
 
             foreach (var obj in list)
             {
-                for (float i = sum; i < Convert.ToDouble(obj.Value) + sum; i++)
+                for (var i = sum; i < Convert.ToDouble(obj.Value) + sum; i++)
                 {
                     if (i >= choice)
                     {

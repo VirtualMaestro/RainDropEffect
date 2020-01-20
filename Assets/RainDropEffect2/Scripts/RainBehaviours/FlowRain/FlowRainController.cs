@@ -55,9 +55,6 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
             }
         }
 
-        /// <summary>
-        /// Play this instance.
-        /// </summary>
         public void Play()
         {
             StartCoroutine(PlayDelay(Variables.delay));

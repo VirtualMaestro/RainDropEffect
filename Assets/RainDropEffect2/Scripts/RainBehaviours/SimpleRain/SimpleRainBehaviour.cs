@@ -1,297 +1,176 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using RainDropEffect2.Scripts.Common;
+using UnityEditor;
 using UnityEngine;
 
 namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 {
-	[ExecuteInEditMode]
-	public class SimpleRainBehaviour : RainBehaviourBase {
+    [ExecuteInEditMode]
+    public class SimpleRainBehaviour : RainBehaviourBase
+    {
+        private const float Tolerance = 0.0001f;
 
-		#region [ Internal Variables ]
+        private SimpleRainController RainController { get; set; }
 
-		[HideInInspector]
-		SimpleRainController rainController
-		{
-			get;
-			set;
-		}
+        [SerializeField] 
+        private SimpleRainVariables variables;
 
-		#endregion
+        public override int CurrentDrawCall => RainController == null ? 0 : RainController.drawers.FindAll(x => x.Drawer.IsEnabled).Count;
+        public override int MaxDrawCall => variables.maxRainSpawnCount;
+        public override bool IsPlaying => RainController != null && RainController.IsPlaying;
 
+        /// <summary>
+        /// Gets a value indicating whether rain is shown on the screen.
+        /// </summary>
+        public override bool IsEnabled => Math.Abs(alpha) > Tolerance && CurrentDrawCall != 0;
 
-		#region [ Public Variables ]
+        public override void Refresh()
+        {
+            if (ReferenceEquals(RainController, null) == false)
+            {
+                DestroyImmediate(RainController.gameObject);
+                RainController = null;
+            }
 
-		/// <summary>
-		/// The variables.
-		/// </summary>
+            RainController = CreateController();
+            RainController.Refresh();
+            RainController.NoMoreRain = true;
+        }
 
-		[SerializeField]
-		public SimpleRainVariables Variables;
+        public override void StartRain()
+        {
+            if (ReferenceEquals(RainController, null))
+            {
+                RainController = CreateController();
+                RainController.Refresh();
+            }
 
-		/// <summary>
-		/// Gets the current draw call.
-		/// </summary>
-		/// <value>The current draw call.</value>
+            RainController.NoMoreRain = false;
+            RainController.Play();
+        }
 
-		public override int CurrentDrawCall 
-		{
-			get 
-			{
-				if (rainController == null) 
-				{
-					return 0;
-				} 
-				else 
-				{
-					return rainController.drawers.FindAll (x => x.Drawer.IsEnabled).Count ();
-				}
-			}
-		}
+        public override void StopRain()
+        {
+            if (ReferenceEquals(RainController, null)) return;
 
-		/// <summary>
-		/// Gets the max draw call.
-		/// </summary>
-		/// <value>The max draw call.</value>
+            RainController.NoMoreRain = true;
+        }
 
-		public override int MaxDrawCall
-		{
-			get
-			{ 
-				return Variables.MaxRainSpawnCount;
-			}
-		}
+        public override void StopRainImmediate()
+        {
+            if (ReferenceEquals(RainController, null)) return;
 
-		/// <summary>
-		/// Gets a value indicating whether this instance is playing.
-		/// </summary>
-		/// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
+            DestroyImmediate(RainController.gameObject);
+            RainController = null;
+        }
 
-		public override bool IsPlaying {
-			get 
-			{
-				if (rainController == null) 
-				{
-					return false;
-				}
-				else 
-				{
-					return rainController.IsPlaying;
-				}
-			}
-		}
+        public override void ApplyFinalDepth(int finalDepth)
+        {
+            if (ReferenceEquals(RainController, null)) return;
 
-		/// <summary>
-		/// Gets a value indicating whether rain is shown on the screen.
-		/// </summary>
-		/// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
+            RainController.RenderQueue = finalDepth;
+        }
 
-		public override bool IsEnabled
-		{
-			get
-			{ 
-				return this.alpha != 0f && this.CurrentDrawCall != 0;
-			}
-		}
+        public override void ApplyGlobalWind(Vector2 globalWind)
+        {
+            if (ReferenceEquals(RainController, null)) return;
 
-		#endregion
+            RainController.GlobalWind = globalWind;
+        }
 
+        private void Start()
+        {
+            if (Application.isPlaying && variables.autoStart)
+            {
+                StartRain();
+            }
+        }
 
-		public override void Refresh ()
-		{
-			if (rainController != null)
-			{
-				DestroyImmediate (rainController.gameObject);
-				rainController = null;
-			}
-			rainController = CreateController ();
-			rainController.Refresh ();
-			rainController.NoMoreRain = true;
-		}
+        public override void Update()
+        {
+            InitParams();
 
+            if (ReferenceEquals(RainController, null)) return;
 
-		public override void StartRain ()
-		{
-			if (rainController == null)
-			{
-				rainController = CreateController ();
-				rainController.Refresh ();
-			}
-			rainController.NoMoreRain = false;
-			rainController.Play ();
-		}
+            RainController.ShaderType = shaderType;
+            RainController.Alpha = alpha;
+            RainController.GForceVector = gForceVector;
+            RainController.UpdateController();
+        }
 
+        private SimpleRainController CreateController()
+        {
+            var tr = RainDropTools.CreateHiddenObject("Controller", transform);
+            var con = tr.gameObject.AddComponent<SimpleRainController>();
+            con.Variables = variables;
+            con.Alpha = 0f;
+            con.NoMoreRain = false;
+            con.Camera = GetComponentInParent<UnityEngine.Camera>();
+            return con;
+        }
 
-		public override void StopRain ()
-		{
-			if (rainController == null)
-			{
-				return;
-			}
-			rainController.NoMoreRain = true;
-		}
+        /// <summary>
+        /// (Internal) Initialize inspector params
+        /// </summary>
+         [Conditional("DEBUG")]
+        private void InitParams()
+        {
+            if (variables == null) return;
 
+            if (variables.maxRainSpawnCount < 0)
+                variables.maxRainSpawnCount = 0;
+            if (variables.lifetimeMin > variables.lifetimeMax)
+                Swap(ref variables.lifetimeMin, ref variables.lifetimeMax);
+            if (variables.emissionRateMin > variables.emissionRateMax)
+                Swap(ref variables.emissionRateMin, ref variables.emissionRateMax);
+            if (variables.sizeMinX > variables.sizeMaxX)
+                Swap(ref variables.sizeMinX, ref variables.sizeMaxX);
+            if (variables.sizeMinY > variables.sizeMaxY)
+                Swap(ref variables.sizeMinY, ref variables.sizeMaxY);
+        }
 
-		public override void StopRainImmediate ()
-		{
-			if (rainController == null)
-			{
-				return;
-			}
-			DestroyImmediate (rainController.gameObject);
-			rainController = null;
-		}
-
-
-		public override void ApplyFinalDepth (int depth)
-		{
-			if (rainController == null)
-			{
-				return;
-			}
-			rainController.RenderQueue = depth;
-		}
-
-
-		public override void ApplyGlobalWind (Vector2 globalWind)
-		{
-			if (rainController == null)
-			{
-				return;
-			}
-			rainController.GlobalWind = globalWind;
-		}
-
-
-		#region [ Internal Methods ]
-
-		/// <summary>
-		/// Unity's Start
-		/// </summary>
-
-		void Start ()
-		{
-			if (Application.isPlaying && Variables.AutoStart) 
-			{
-				this.StartRain ();
-			}
-		}
-
-		/// <summary>
-		/// Unity's update
-		/// </summary>
-
-		public override void Update ()
-		{
-			InitParams ();
-
-			if (rainController == null)
-			{
-				return;
-			}
-
-			rainController.ShaderType = this.shaderType;
-			rainController.Alpha = this.alpha;
-			rainController.GForceVector = this.gForceVector;
-			rainController.UpdateController ();
-		}
-
-		/// <summary>
-		/// Creates the controller.
-		/// </summary>
-	
-		SimpleRainController CreateController ()
-		{
-			Transform tr = RainDropTools.CreateHiddenObject ("Controller", this.transform);
-			SimpleRainController con = tr.gameObject.AddComponent <SimpleRainController> ();
-			con.Variables = Variables;
-			con.Alpha = 0f;
-			con.NoMoreRain = false;
-			con.camera = GetComponentInParent<UnityEngine.Camera> ();
-			return con;
-		}
-
-		/// <summary>
-		/// (Internal) Initialize inspector params
-		/// </summary>
-
-		public void InitParams ()
-		{
-			if (Variables == null)
-				return;
-
-			if (Variables.MaxRainSpawnCount < 0)
-				Variables.MaxRainSpawnCount = 0;
-			if (Variables.LifetimeMin > Variables.LifetimeMax) 
-				swap (ref Variables.LifetimeMin, ref Variables.LifetimeMax);
-			if (Variables.EmissionRateMin > Variables.EmissionRateMax) 
-				swap (ref Variables.EmissionRateMin, ref Variables.EmissionRateMax);
-			if (Variables.SizeMinX > Variables.SizeMaxX) 
-				swap (ref Variables.SizeMinX, ref Variables.SizeMaxX);
-			if (Variables.SizeMinY > Variables.SizeMaxY) 
-				swap (ref Variables.SizeMinY, ref Variables.SizeMaxY);
-		}
-
-		/// <summary>
-		/// (Internal) Swap the specified a and b.
-		/// </summary>
-		/// <param name="a">The alpha component.</param>
-		/// <param name="b">The blue component.</param>
-
-		private void swap (ref float a, ref float b)
-		{
-			float tmp = a;
-			a = b;
-			b = tmp;
-		}
-
-		/// <summary>
-		/// Swap the specified a and b.
-		/// </summary>
-		/// <param name="a">The alpha component.</param>
-		/// <param name="b">The blue component.</param>
-
-		private void swap (ref int a, ref int b)
-		{
-			int tmp = a;
-			a = b;
-			b = tmp;
-		}
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Swap<T>(ref T a, ref T b)
+        {
+            var temp = a;
+            a = b;
+            b = temp;
+        }
 
 #if UNITY_EDITOR
-		private void OnDrawGizmos()
-		{
-			UnityEngine.Camera rainCam = GetComponentInParent<UnityEngine.Camera>();
+        private void OnDrawGizmos()
+        {
+            UnityEngine.Camera rainCam = GetComponentInParent<UnityEngine.Camera>();
 
-			if (rainCam == null)
-				return;
+            if (rainCam == null)
+                return;
 
-			if (rainController != null)
-			{
-				foreach (var dc in rainController.drawers)
-				{
-					if (dc.currentState == SimpleRainController.DrawState.Playing)
-						Gizmos.color = new Color(1f, 0.6f, 0.1f, 1f);
-					else
-						Gizmos.color = new Color(1f, 1f, 1f, 0.4f);
+            if (RainController != null)
+            {
+                foreach (var dc in RainController.drawers)
+                {
+                    if (dc.currentState == SimpleRainController.DrawState.Playing)
+                        Gizmos.color = new Color(1f, 0.6f, 0.1f, 1f);
+                    else
+                        Gizmos.color = new Color(1f, 1f, 1f, 0.4f);
 
-					Gizmos.DrawWireSphere(dc.Drawer.transform.position, .5f);
-				}
-			}
+                    Gizmos.DrawWireSphere(dc.Drawer.transform.position, .5f);
+                }
+            }
 
-			if (UnityEditor.Selection.Contains(gameObject))
-			{
-				float h = rainCam.orthographicSize * 2f;
-				float w = h * rainCam.aspect;
-				Vector3 p = transform.position + (Vector3.up * h * Variables.SpawnOffsetY);
-				Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.8f);
-				Gizmos.DrawWireCube(p, new Vector3(w, h, rainCam.nearClipPlane - rainCam.nearClipPlane + 0.1f));
-				Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.2f);
-				Gizmos.DrawCube(p, new Vector3(w, h, rainCam.farClipPlane - rainCam.nearClipPlane + 0.1f));
-			}
-		}
+            if (Selection.Contains(gameObject))
+            {
+                float h = rainCam.orthographicSize * 2f;
+                float w = h * rainCam.aspect;
+                Vector3 p = transform.position + (Vector3.up * h * variables.spawnOffsetY);
+                Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.8f);
+                Gizmos.DrawWireCube(p, new Vector3(w, h, rainCam.nearClipPlane - rainCam.nearClipPlane + 0.1f));
+                Gizmos.color = new Color(0.5f, 0.9f, 0.8f, 0.2f);
+                Gizmos.DrawCube(p, new Vector3(w, h, rainCam.farClipPlane - rainCam.nearClipPlane + 0.1f));
+            }
+        }
 #endif
-
-		#endregion
-	}
+    }
 }

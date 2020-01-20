@@ -1,71 +1,58 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 {
-	[System.Serializable]
-	public class SimpleRainVariables {
+    [Serializable]
+    public class SimpleRainVariables
+    {
+        public bool autoStart = true;
+        public bool playOnce;
 
-		public bool AutoStart = true;
-		public bool PlayOnce = false;
+        public Color overlayColor = Color.gray;
+        [Range(0.0f, 5.0f)] public float darkness;
 
-		public Color OverlayColor = Color.gray;
-		[Range(0.0f, 5.0f)]
-		public float Darkness;
+        public Texture normalMap;
+        public Texture overlayTexture;
 
-		public Texture NormalMap;
-		public Texture OverlayTexture;
+        public bool autoRotate;
 
-		public bool AutoRotate = false;
+        public float duration = 1f;
+        public float delay;
 
-		public float Duration = 1f;
-		public float Delay = 0f;
+        public int maxRainSpawnCount = 30;
 
-		public int MaxRainSpawnCount = 30;
+        [Range(-2, 2f)] public float spawnOffsetY;
 
-		[Range(-2, 2f)]
-		public float SpawnOffsetY = 0f;
+        [Range(0f, 10.0f)] public float lifetimeMin = 0.6f;
+        [Range(0f, 10.0f)] public float lifetimeMax = 1.4f;
 
-		[Range(0f, 10.0f)]
-		public float LifetimeMin = 0.6f;
-		[Range(0f, 10.0f)]
-		public float LifetimeMax = 1.4f;
+        [Range(0, 50f)] public int emissionRateMax = 5;
 
-		[Range(0, 50f)]
-		public int EmissionRateMax = 5;
+        [Range(0, 50f)] public int emissionRateMin = 2;
 
-		[Range(0, 50f)]
-		public int EmissionRateMin = 2;
+        public AnimationCurve alphaOverLifetime;
 
-		public AnimationCurve AlphaOverLifetime;
+        [Range(0.0f, 20f)] public float sizeMinX = 0.75f;
+        [Range(0.0f, 20f)] public float sizeMaxX = 0.75f;
+        [Range(0.0f, 20f)] public float sizeMinY = 0.75f;
+        [Range(0.0f, 20f)] public float sizeMaxY = 0.75f;
+        public AnimationCurve sizeOverLifetime;
 
-		[Range(0.0f, 20f)]
-		public float SizeMinX = 0.75f;
-		[Range(0.0f, 20f)]
-		public float SizeMaxX = 0.75f;
-		[Range(0.0f, 20f)]
-		public float SizeMinY = 0.75f;
-		[Range(0.0f, 20f)]
-		public float SizeMaxY = 0.75f;
-		public AnimationCurve SizeOverLifetime;
+        [Range(0.0f, 200.0f)] public float distortionValue;
+        public AnimationCurve distortionOverLifetime;
 
-		[Range(0.0f, 200.0f)]
-		public float DistortionValue;
-		public AnimationCurve DistortionOverLifetime;
+        [Range(0.0f, 2.0f)] public float reliefValue;
+        public AnimationCurve reliefOverLifetime;
 
-		[Range(0.0f, 2.0f)]
-		public float ReliefValue;
-		public AnimationCurve ReliefOverLifetime;
+        [Range(0.0f, 2.0f)] public float blur;
+        public AnimationCurve blurOverLifetime;
 
-		[Range(0.0f, 2.0f)]
-		public float Blur;
-		public AnimationCurve BlurOverLifetime;
+        public Texture bloomTexture;
 
-		public Texture BloomTexture;
+        [Range(0.0f, 20.0f)] public float bloom;
+        public AnimationCurve bloomOverLifetime;
 
-		[Range(0.0f, 20.0f)]
-		public float Bloom;
-		public AnimationCurve BloomOverLifetime;
-
-		public AnimationCurve PosYOverLifetime;
-	}
+        public AnimationCurve posYOverLifetime;
+    }
 }

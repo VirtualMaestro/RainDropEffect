@@ -19,27 +19,15 @@ namespace RainDropEffect2.Scripts.Camera
 
 		private List<RainBehaviourBase> RainBehaviours => _rainBehaviours ?? (_rainBehaviours = GetComponentsInChildren<RainBehaviourBase>(false).ToList());
 
-		/// <summary>
-		/// The render queue.
-		/// </summary>
 		[SerializeField]
 		private int renderQueue = 3000;
 
-		/// <summary>
-		/// The alpha.
-		/// </summary>
 		[Range (0f, 1f)]
 		public float alpha = 1f;
 
-		/// <summary>
-		/// The global wind.
-		/// </summary>
 		[SerializeField]
 		private Vector2 globalWind = Vector3.zero;
 
-		/// <summary>
-		/// Gravity vector
-		/// </summary>
 		[SerializeField]
 		public Vector3 gForceVector = Vector3.down;
 
@@ -53,22 +41,8 @@ namespace RainDropEffect2.Scripts.Camera
 		[SerializeField]
 		public bool vrMode;
 
-		/// <summary>
-		/// Gets the current draw call.
-		/// </summary>
-		/// <value>The current draw call.</value>
 		public int CurrentDrawCall => RainBehaviours.Select(x => x.CurrentDrawCall).Sum();
-
-		/// <summary>
-		/// Gets the max draw call.
-		/// </summary>
-		/// <value>The max draw call.</value>
 		public int MaxDrawCall => RainBehaviours.Select (x => x.MaxDrawCall).Sum ();
-
-		/// <summary>
-		/// Gets a value indicating whether this instance is playing.
-		/// </summary>
-		/// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
 		public bool IsPlaying => RainBehaviours.FindAll (x => x.IsPlaying).Count != 0;
 
 		private void Awake ()

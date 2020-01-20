@@ -85,7 +85,8 @@ namespace RainDropEffect2.Scripts.Common
 			Texture bloomTexture=null,
 			float bloom =0f,
 			float darkness=0f
-		) {
+		) 
+		{
 			// Apply shader values
 			switch (shaderType)
 			{
@@ -120,8 +121,6 @@ namespace RainDropEffect2.Scripts.Common
 					material.SetColor("_Color", overlayColor ?? Color.white);
 					material.SetFloat("_Darkness", darkness);
 					material.SetFloat("_Relief", reliefValue);
-					break;
-				default:
 					break;
 			}
 		}

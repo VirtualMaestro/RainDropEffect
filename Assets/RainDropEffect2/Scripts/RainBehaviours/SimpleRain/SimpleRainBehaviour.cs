@@ -89,7 +89,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 		{
 			get
 			{ 
-				return this.Alpha != 0f && this.CurrentDrawCall != 0;
+				return this.alpha != 0f && this.CurrentDrawCall != 0;
 			}
 		}
 
@@ -189,9 +189,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 				return;
 			}
 
-			rainController.ShaderType = this.ShaderType;
-			rainController.Alpha = this.Alpha;
-			rainController.GForceVector = this.GForceVector;
+			rainController.ShaderType = this.shaderType;
+			rainController.Alpha = this.alpha;
+			rainController.GForceVector = this.gForceVector;
 			rainController.UpdateController ();
 		}
 

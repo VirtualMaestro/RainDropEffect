@@ -96,7 +96,7 @@ namespace RainDropEffect2.Scripts.Camera
 
 			if (transform.childCount != _rainBehaviours.Count) _rainBehaviours = null; 
 				
-			RainBehaviours.Sort ((a, b) => a.Depth - b.Depth);
+			RainBehaviours.Sort ((a, b) => a.depth - b.depth);
 
 			int cnt = 0;
 			
@@ -117,13 +117,13 @@ namespace RainDropEffect2.Scripts.Camera
 					rainTransform.localPosition = Vector3.zero;
 				}
 				
-				beh.ShaderType = shaderType;
-				beh.VRMode = vrMode;
-				beh.Distance = distance;
+				beh.shaderType = shaderType;
+				beh.vrMode = vrMode;
+				beh.distance = distance;
 				beh.ApplyFinalDepth (renderQueue + cnt);
 				beh.ApplyGlobalWind (globalWind);
-				beh.GForceVector = gForceVector;
-				beh.Alpha = alpha;
+				beh.gForceVector = gForceVector;
+				beh.alpha = alpha;
 				cnt += beh.MaxDrawCall;
 			}
 		}

@@ -81,7 +81,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
 		{
 			get
 			{ 
-				return this.Alpha != 0f && this.CurrentDrawCall != 0;
+				return this.alpha != 0f && this.CurrentDrawCall != 0;
 			}
 		}
 
@@ -193,9 +193,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
 				return;
 			}
 
-			rainController.ShaderType = this.ShaderType;
-			rainController.Alpha = this.Alpha;
-			rainController.VRMode = this.VRMode;
+			rainController.ShaderType = this.shaderType;
+			rainController.Alpha = this.alpha;
+			rainController.VRMode = this.vrMode;
 			rainController.UpdateController ();
 		}
 

@@ -10,37 +10,24 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
     [ExecuteInEditMode]
     public class FlowRainBehaviour : RainBehaviourBase
     {
+        private const float Tolerance = 0.0001f;
+
+        [SerializeField] 
+        private FlowRainVariables variables;
+
         private FlowRainController RainController { get; set; }
 
-        /// <summary>
-        /// The variables.
-        /// </summary>
-        [SerializeField] private FlowRainVariables variables;
-
-        /// <summary>
-        /// Gets the current draw call.
-        /// </summary>
-        /// <value>The current draw call.</value>
         public override int CurrentDrawCall =>
             RainController == null ? 0 : RainController.drawers.FindAll(x => x.Drawer.enabled).Count;
 
-        /// <summary>
-        /// Gets the max draw call.
-        /// </summary>
-        /// <value>The max draw call.</value>
         public override int MaxDrawCall => variables.maxRainSpawnCount;
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is playing.
-        /// </summary>
-        /// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
         public override bool IsPlaying => RainController != null && RainController.IsPlaying;
 
         /// <summary>
         /// Gets a value indicating whether rain is shown on the screen.
         /// </summary>
         /// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
-        public override bool IsEnabled => Math.Abs(Alpha) > 0.0001 && CurrentDrawCall != 0;
+        public override bool IsEnabled => Math.Abs(alpha) > Tolerance && CurrentDrawCall != 0;
 
         public override void Refresh()
         {
@@ -81,10 +68,10 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
             RainController = null;
         }
 
-        public override void ApplyFinalDepth(int depth)
+        public override void ApplyFinalDepth(int finalDepth)
         {
             if (RainController == null) return;
-            RainController.RenderQueue = depth;
+            RainController.RenderQueue = finalDepth;
         }
 
         public override void ApplyGlobalWind(Vector2 globalWind)
@@ -107,10 +94,10 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
 
             if (RainController == null) return;
 
-            RainController.ShaderType = ShaderType;
-            RainController.Alpha = Alpha;
-            RainController.Distance = Distance;
-            RainController.GForceVector = GForceVector;
+            RainController.ShaderType = shaderType;
+            RainController.Alpha = alpha;
+            RainController.Distance = distance;
+            RainController.GForceVector = gForceVector;
             RainController.UpdateController();
         }
 

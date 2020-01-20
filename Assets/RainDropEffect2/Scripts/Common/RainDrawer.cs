@@ -1,176 +1,149 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace RainDropEffect2.Scripts.Common
 {
     [ExecuteInEditMode]
     public class RainDrawer : MonoBehaviour
     {
-        [HideInInspector]
-        [System.NonSerialized]
+        private const float Tolerance = 0.0001f;
+
+        [NonSerialized] 
         public int RenderQueue = 3000;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public Vector3 CameraPos;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public Color OverlayColor;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public Texture NormalMap;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public Texture ReliefTexture;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public float DistortionStrength;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public float ReliefValue;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public float Shiness;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public float Blur;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public Texture BloomTexture;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public float Bloom;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public float Darkness;
 
-        [HideInInspector]
-        [System.NonSerialized]
+        [NonSerialized] 
         public RainDropTools.RainDropShaderType ShaderType;
 
+        private Material _material;
+        private MeshFilter _meshFilter;
+        private Mesh _mesh;
+        private MeshRenderer _meshRenderer;
+        private bool _changed;
 
-        public bool IsEnabled
-        {
-            get
-            {
-                return meshRenderer != null && meshRenderer.enabled == true;
-            }
-        }
-
-        Material material = null;
-        MeshFilter meshFilter = null;
-        Mesh mesh = null;
-        MeshRenderer meshRenderer = null;
-        bool changed = false;
-
+        public bool IsEnabled => _meshRenderer != null && _meshRenderer.enabled;
 
         public void Refresh()
         {
-            changed = true;
+            _changed = true;
         }
 
         public void Hide()
         {
-            if (meshRenderer != null)
-                meshRenderer.enabled = false;
+            if (ReferenceEquals(_meshRenderer, null)) return;
+            _meshRenderer.enabled = false;
         }
 
         public void Show()
         {
-            if (changed)
+            if (_changed)
             {
-                DestroyImmediate(meshRenderer);
-                DestroyImmediate(meshFilter);
-                meshRenderer = null;
-                meshFilter = null;
-                material = null;
-                mesh = null;
-                changed = false;
+                DestroyImmediate(_meshRenderer);
+                DestroyImmediate(_meshFilter);
+                _meshRenderer = null;
+                _meshFilter = null;
+                _material = null;
+                _mesh = null;
+                _changed = false;
             }
 
-            if (NormalMap != null)
-            {
-                if (ShaderType == RainDropTools.RainDropShaderType.Cheap)
-                {
-                    if (DistortionStrength == 0f)
-                    {
-                        Hide();
-                        return;
-                    }
-                }
-                else
-                {
-                    if (DistortionStrength == 0f && ReliefValue == 0f && OverlayColor.a == 0f && Blur == 0f && Bloom == 0f)
-                    {
-                        Hide();
-                        return;
-                    }
-                }
-            }
-            else
+            if (ReferenceEquals(NormalMap, null))
             {
                 Debug.LogError("Normal Map is null!");
                 Hide();
                 return;
             }
 
-            if (material == null)
+            if (ShaderType == RainDropTools.RainDropShaderType.Cheap && Math.Abs(DistortionStrength) < Tolerance)
             {
-                material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue);
+                Hide();
+                return;
             }
 
-            if (meshFilter == null)
+            if ((DistortionStrength + ReliefValue + OverlayColor.a + Blur + Bloom) / 5 < Tolerance)
             {
-                meshFilter = gameObject.AddComponent<MeshFilter>();
+                Hide();
+                return;
             }
 
-            if (meshRenderer == null)
+            if (ReferenceEquals(_material, null))
             {
-                meshRenderer = gameObject.AddComponent<MeshRenderer>();
+                _material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue);
             }
 
-            if (mesh == null)
+            if (ReferenceEquals(_meshFilter, null))
             {
-                mesh = RainDropTools.CreateQuadMesh();
+                _meshFilter = gameObject.AddComponent<MeshFilter>();
+            }
+
+            if (ReferenceEquals(_meshRenderer, null))
+            {
+                _meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            }
+
+            if (ReferenceEquals(_mesh, null))
+            {
+                _mesh = RainDropTools.CreateQuadMesh();
             }
 
             // Update shader if needed
-            if (material.shader.name != RainDropTools.GetShaderName(ShaderType))
+            if (_material.shader.name != RainDropTools.GetShaderName(ShaderType))
             {
-                material = RainDropTools.CreateRainMaterial(ShaderType, material.renderQueue);
+                _material = RainDropTools.CreateRainMaterial(ShaderType, _material.renderQueue);
             }
 
-            if (material != null && mesh != null && meshFilter != null)
-            {
-                meshFilter.mesh = mesh;
-                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                meshRenderer.material = material;
-                meshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-                meshRenderer.enabled = true;
+            _meshFilter.mesh = _mesh;
+            _meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            _meshRenderer.material = _material;
+            _meshRenderer.lightProbeUsage = LightProbeUsage.Off;
+            _meshRenderer.enabled = true;
 
-                RainDropTools.ApplyRainMaterialValue(
-                    material,
-                    ShaderType,
-                    NormalMap,
-                    ReliefTexture,
-                    DistortionStrength,
-                    OverlayColor,
-                    ReliefValue,
-                    Blur,
-                    BloomTexture,
-                    Bloom,
-                    Darkness
-                );
-            }
+            RainDropTools.ApplyRainMaterialValue(
+                _material,
+                ShaderType,
+                NormalMap,
+                ReliefTexture,
+                DistortionStrength,
+                OverlayColor,
+                ReliefValue,
+                Blur,
+                BloomTexture,
+                Bloom,
+                Darkness
+            );
         }
     }
 }

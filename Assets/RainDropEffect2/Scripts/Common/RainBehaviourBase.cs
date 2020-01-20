@@ -2,191 +2,104 @@
 
 namespace RainDropEffect2.Scripts.Common
 {
-	/// <summary>
-	/// ABSTRACT Rain base.
-	/// </summary>
-	public abstract class RainBehaviourBase : MonoBehaviour {
+    /// <summary>
+    /// ABSTRACT Rain base.
+    /// </summary>
+    public abstract class RainBehaviourBase : MonoBehaviour
+    {
+        /// <summary>
+        /// Rendering Queue
+        /// </summary>
+        public int depth;
 
-		/// <summary>
-		/// Rendering Queue
-		/// </summary>
+        [HideInInspector] 
+        public float alpha;
 
-		public int Depth;
+        [HideInInspector] 
+        public RainDropTools.RainDropShaderType shaderType;
 
+        [HideInInspector] 
+        public bool vrMode;
 
-		/// <summary>
-		/// The alpha value.
-		/// </summary>
+        /// <summary>
+        /// Rain distance from camera
+        /// </summary>
+        [HideInInspector] 
+        public float distance;
 
-		[HideInInspector]
-		public float Alpha;
+        [HideInInspector] 
+        public Vector3 gForceVector;
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is playing.
+        /// </summary>
+        /// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
+        public virtual bool IsPlaying => false;
 
-		/// <summary>
-		/// The shader type.
-		/// </summary>
+        /// <summary>
+        /// Gets a value indicating whether rain is shown on the screen.
+        /// </summary>
+        /// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
+        public virtual bool IsEnabled => false;
 
-		[HideInInspector]
-		public RainDropTools.RainDropShaderType ShaderType;
+        public virtual int CurrentDrawCall => 0;
+        public virtual int MaxDrawCall => 0;
 
+        /// <summary>
+        /// You can call this when you want to redraw rain
+        /// </summary>
+        public virtual void Refresh()
+        {
+        }
 
-		/// <summary>
-		/// Whether current mode is VR or not
-		/// </summary>
+        /// <summary>
+        /// Starts the rain increasingly.
+        /// </summary>
+        public virtual void StartRain()
+        {
+        }
 
-		[HideInInspector]
-		public bool VRMode;
+        /// <summary>
+        /// Stops the rain gradually.
+        /// </summary>
+        public virtual void StopRain()
+        {
+        }
 
+        /// <summary>
+        /// Stops the rain immediately.
+        /// </summary>
+        public virtual void StopRainImmediate()
+        {
+        }
 
-		/// <summary>
-		/// Rain distance from camera
-		/// </summary>
+        /// <summary>
+        /// Applies the final depth.
+        /// </summary>
+        public virtual void ApplyFinalDepth(int finalDepth)
+        {
+        }
 
-		[HideInInspector]
-		public float Distance;
+        /// <summary>
+        /// Applies the global wind
+        /// </summary>
+        /// <param name="globalWind"></param>
+        public virtual void ApplyGlobalWind(Vector2 globalWind)
+        {
+        }
 
+        /// <summary>
+        /// Unity's Awake
+        /// </summary>
+        public virtual void Awake()
+        {
+        }
 
-		/// <summary>
-		/// G-force vector
-		/// </summary>
-
-		[HideInInspector]
-		public Vector3 GForceVector;
-
-
-		/// <summary>
-		/// Gets a value indicating whether this instance is playing.
-		/// </summary>
-		/// <value><c>true</c> if this instance is playing; otherwise, <c>false</c>.</value>
-
-		public virtual bool IsPlaying
-		{
-			get
-			{ 
-				return false;
-			}
-		}
-
-
-		/// <summary>
-		/// Gets a value indicating whether rain is shown on the screen.
-		/// </summary>
-		/// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
-
-		public virtual bool IsEnabled
-		{
-			get
-			{ 
-				return false;
-			}
-		}
-
-
-		/// <summary>
-		/// Gets the current draw call.
-		/// </summary>
-		/// <value>The current draw call.</value>
-
-		public virtual int CurrentDrawCall 
-		{
-			get 
-			{
-				return 0;
-			}
-		}
-
-
-		/// <summary>
-		/// Gets the max draw call.
-		/// </summary>
-		/// <value>The max draw call.</value>
-
-		public virtual int MaxDrawCall
-		{
-			get
-			{ 
-				return 0;
-			}
-		}
-
-
-		/// <summary>
-		/// You can call this when you want to redraw rain
-		/// </summary>
-
-		public virtual void Refresh ()
-		{
-			return;
-		}
-
-
-		/// <summary>
-		/// Starts the rain increasingly.
-		/// </summary>
-
-		public virtual void StartRain ()
-		{
-			return;
-		}
-
-
-		/// <summary>
-		/// Stops the rain gradually.
-		/// </summary>
-
-		public virtual void StopRain () 
-		{
-			return;
-		}
-
-
-		/// <summary>
-		/// Stops the rain immidiately.
-		/// </summary>
-
-		public virtual void StopRainImmediate () 
-		{
-			return;
-		}
-
-
-		/// <summary>
-		/// Applies the final depth.
-		/// </summary>
-		/// <param name="depth">Depth.</param>
-
-		public virtual void ApplyFinalDepth (int depth)
-		{
-			return;
-		}
-
-
-		/// <summary>
-		/// Applies the global wind
-		/// </summary>
-		/// <param name="globalWind"></param>
-
-		public virtual void ApplyGlobalWind(Vector2 globalWind)
-		{
-			return;
-		}
-
-
-		/// <summary>
-		/// Unity's Awake
-		/// </summary>
-
-		public virtual void Awake () {
-			return;
-		}
-
-		/// <summary>
-		/// Unity's Update
-		/// </summary>
-
-		public virtual void Update () 
-		{
-			return;
-		}
-	}
+        /// <summary>
+        /// Unity's Update
+        /// </summary>
+        public virtual void Update()
+        {
+        }
+    }
 }

@@ -26,9 +26,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
         public AnimationCurve fadeinCurve = _defaultAnimationCurve;
 
         [Range(0.01f, 20f)] 
-        public float sizeX;
+        public float sizeX = 9.0f;
         [Range(0.01f, 20f)] 
-        public float sizeY;
+        public float sizeY = 9.0f;
 
         [Range(-2, 2f)] 
         public float spawnOffsetX;

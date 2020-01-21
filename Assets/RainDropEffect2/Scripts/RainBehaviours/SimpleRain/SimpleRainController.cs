@@ -41,8 +41,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
         {
             foreach (var d in drawers)
             {
-                d.Drawer.Hide();
-                DestroyImmediate(d.Drawer.gameObject);
+                d.drawer.Hide();
+                DestroyImmediate(d.drawer.gameObject);
             }
 
             drawers.Clear();
@@ -175,11 +175,11 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 
             foreach (var rem in removeList)
             {
-                rem.Drawer.Hide();
-                DestroyImmediate(rem.Drawer.gameObject);
+                rem.drawer.Hide();
+                DestroyImmediate(rem.drawer.gameObject);
             }
 
-            drawers.RemoveAll(x => x.Drawer == null);
+            drawers.RemoveAll(x => x.drawer == null);
         }
 
         private void CheckSpawnTime()
@@ -232,31 +232,31 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
             );
             dc.transform.localEulerAngles +=
                 Vector3.forward * (Variables.autoRotate ? Random.Range(0f, 179.9f) : 0f);
-            dc.Drawer.NormalMap = Variables.normalMap;
-            dc.Drawer.ReliefTexture = Variables.overlayTexture;
-            dc.Drawer.Darkness = Variables.darkness;
-            dc.Drawer.Hide();
+            dc.drawer.NormalMap = Variables.normalMap;
+            dc.drawer.ReliefTexture = Variables.overlayTexture;
+            dc.drawer.Darkness = Variables.darkness;
+            dc.drawer.Hide();
         }
 
         private void UpdateShader(SimpleRainDrawerContainer dc, int index)
         {
             var progress = GetProgress(dc);
-            dc.Drawer.RenderQueue = RenderQueue + index;
-            dc.Drawer.NormalMap = Variables.normalMap;
-            dc.Drawer.ReliefTexture = Variables.overlayTexture;
-            dc.Drawer.OverlayColor = new Color(
+            dc.drawer.RenderQueue = RenderQueue + index;
+            dc.drawer.NormalMap = Variables.normalMap;
+            dc.drawer.ReliefTexture = Variables.overlayTexture;
+            dc.drawer.OverlayColor = new Color(
                 Variables.overlayColor.r,
                 Variables.overlayColor.g,
                 Variables.overlayColor.b,
                 Variables.overlayColor.a * Variables.alphaOverLifetime.Evaluate(progress) * Alpha
             );
-            dc.Drawer.DistortionStrength =
+            dc.drawer.DistortionStrength =
                 Variables.distortionValue * Variables.distortionOverLifetime.Evaluate(progress) * Alpha;
-            dc.Drawer.ReliefValue = Variables.reliefValue * Variables.reliefOverLifetime.Evaluate(progress) * Alpha;
-            dc.Drawer.Blur = Variables.blur * Variables.blurOverLifetime.Evaluate(progress) * Alpha;
-            dc.Drawer.BloomTexture = Variables.bloomTexture;
-            dc.Drawer.Bloom = Variables.bloom * Variables.bloomOverLifetime.Evaluate(progress) * Alpha;
-            dc.Drawer.Darkness = Variables.darkness * Alpha;
+            dc.drawer.ReliefValue = Variables.reliefValue * Variables.reliefOverLifetime.Evaluate(progress) * Alpha;
+            dc.drawer.Blur = Variables.blur * Variables.blurOverLifetime.Evaluate(progress) * Alpha;
+            dc.drawer.BloomTexture = Variables.bloomTexture;
+            dc.drawer.Bloom = Variables.bloom * Variables.bloomOverLifetime.Evaluate(progress) * Alpha;
+            dc.drawer.Darkness = Variables.darkness * Alpha;
             dc.transform.localScale = dc.startSize * Variables.sizeOverLifetime.Evaluate(progress);
             
             var gForced = RainDropTools.GetGForcedScreenMovement(Camera.transform, GForceVector);
@@ -267,8 +267,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
             localPosition += progress * new Vector3(GlobalWind.x, GlobalWind.y, 0f);
             localPosition = new Vector3(localPosition.x, localPosition.y, 0f);
             dc.transform.localPosition = localPosition;
-            dc.Drawer.ShaderType = ShaderType;
-            dc.Drawer.Show();
+            dc.drawer.ShaderType = ShaderType;
+            dc.drawer.Show();
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
             if (dc.currentState != DrawState.Playing) return;
             if (GetProgress(dc) >= 1.0f)
             {
-                dc.Drawer.Hide();
+                dc.drawer.Hide();
                 dc.currentState = DrawState.Disabled;
             }
             else

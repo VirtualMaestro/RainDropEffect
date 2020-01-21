@@ -17,7 +17,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
         [SerializeField] 
         private SimpleRainVariables variables;
 
-        public override int CurrentDrawCall => RainController == null ? 0 : RainController.drawers.FindAll(x => x.Drawer.IsEnabled).Count;
+        public override int CurrentDrawCall => RainController == null ? 0 : RainController.drawers.FindAll(x => x.drawer.IsEnabled).Count;
         public override int MaxDrawCall => variables.maxRainSpawnCount;
         public override bool IsPlaying => RainController != null && RainController.IsPlaying;
 
@@ -155,7 +155,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
                     else
                         Gizmos.color = new Color(1f, 1f, 1f, 0.4f);
 
-                    Gizmos.DrawWireSphere(dc.Drawer.transform.position, .5f);
+                    Gizmos.DrawWireSphere(dc.drawer.transform.position, .5f);
                 }
             }
 

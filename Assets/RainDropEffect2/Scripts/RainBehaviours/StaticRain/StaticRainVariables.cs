@@ -1,46 +1,52 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
 {
-	[System.Serializable]
-	public class StaticRainVariables {
+    [Serializable]
+    public class StaticRainVariables
+    {
+        private static AnimationCurve _defaultAnimationCurve = new AnimationCurve(new Keyframe(0, 0, 2, 2), 
+            new Keyframe(0.3f, 1f, -0.25f, -0.25f), 
+            new Keyframe(1f, 0f, 0f, 0f));
+        
+        public bool autoStart = true;
+        public bool fullScreen = true;
 
-		public bool AutoStart = true;
-		public bool FullScreen = true;
+        public Color overlayColor = Color.gray;
+        
+        [Range(0.0f, 5.0f)] 
+        public float darkness;
 
-		public Color OverlayColor = Color.gray;
-		[Range(0.0f, 5.0f)]
-		public float Darkness;
+        public Texture overlayTexture;
+        public Texture normalMap;
 
-		public Texture OverlayTexture;
-		public Texture NormalMap;
+        [Range(0, 15f)] 
+        public float fadeTime = 2f;
+        public AnimationCurve fadeinCurve = _defaultAnimationCurve;
 
-		[Range(0, 15f)]
-		public float fadeTime = 2f;
-		public AnimationCurve FadeinCurve;
+        [Range(0.01f, 20f)] 
+        public float sizeX;
+        [Range(0.01f, 20f)] 
+        public float sizeY;
 
-		[Range(0.01f, 20f)]
-		public float SizeX = 0f;
-		[Range(0.01f, 20f)]
-		public float SizeY = 0f;
+        [Range(-2, 2f)] 
+        public float spawnOffsetX;
+        [Range(-2, 2f)] 
+        public float spawnOffsetY;
 
-		[Range(-2, 2f)]
-		public float SpawnOffsetX = 0f;
-		[Range(-2, 2f)]
-		public float SpawnOffsetY = 0f;
+        [Range(0.05f, 200.0f)] 
+        public float distortionValue;
 
-		[Range(0.05f, 200.0f)]
-		public float DistortionValue;
+        [Range(0.0f, 2.0f)] 
+        public float reliefValue;
 
-		[Range(0.0f, 2.0f)]
-		public float ReliefValue;
+        [Range(0.0f, 2.0f)] 
+        public float blur;
 
-		[Range(0.0f, 2.0f)]
-		public float Blur;
+        public Texture bloomTexture;
 
-		public Texture BloomTexture;
-
-		[Range(0.0f, 20.0f)]
-		public float Bloom;
-	}
+        [Range(0.0f, 20.0f)] 
+        public float bloom;
+    }
 }

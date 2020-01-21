@@ -22,7 +22,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
         public override int CurrentDrawCall => ReferenceEquals(RainController, null)
             ? 0
-            : RainController.drawers.FindAll(x => x.Drawer.enabled).Count;
+            : RainController.drawers.FindAll(x => x.drawer.enabled).Count;
 
         /// <summary>
         /// Gets a value indicating whether rain is shown on the screen.
@@ -161,7 +161,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                     else
                         Gizmos.color = new Color(1f, 1f, 1f, 0.4f);
 
-                    Gizmos.DrawWireSphere(dc.Drawer.transform.position, .5f);
+                    Gizmos.DrawWireSphere(dc.drawer.transform.position, .5f);
                 }
             }
 

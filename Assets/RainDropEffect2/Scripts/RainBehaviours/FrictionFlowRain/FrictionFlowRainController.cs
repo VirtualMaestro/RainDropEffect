@@ -37,7 +37,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
         {
             foreach (var d in drawers)
             {
-                DestroyImmediate(d.Drawer.gameObject);
+                DestroyImmediate(d.drawer.gameObject);
             }
 
             drawers.Clear();
@@ -144,11 +144,11 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
             foreach (var rem in removeList)
             {
-                rem.Drawer.Clear();
-                DestroyImmediate(rem.Drawer.gameObject);
+                rem.drawer.Clear();
+                DestroyImmediate(rem.drawer.gameObject);
             }
 
-            drawers.RemoveAll(x => x.Drawer == null);
+            drawers.RemoveAll(x => x.drawer == null);
         }
 
         private void CheckSpawnTime()
@@ -200,7 +200,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             dc.startPos = dc.transform.localPosition;
             dc.acceleration = RainDropTools.Random(Variables.accelerationMin, Variables.accelerationMax);
 
-            if (ReferenceEquals(dc.Drawer.material, null))
+            if (ReferenceEquals(dc.drawer.material, null))
             {
                 var mat = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue);
                 
@@ -218,17 +218,17 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                     Variables.darkness
                 );
                 
-                dc.Drawer.material = mat;
+                dc.drawer.material = mat;
             }
 
-            dc.Drawer.lifeTime = dc.lifetime;
-            dc.Drawer.vertexDistance = 0.01f;
-            dc.Drawer.angleDivisions = 20;
-            dc.Drawer.widthCurve = Variables.trailWidth;
-            dc.Drawer.widthMultiplier = RainDropTools.Random(Variables.sizeMinX, Variables.sizeMaxX);
-            dc.Drawer.textureMode = LineTextureMode.Stretch;
-            dc.Drawer.Clear();
-            dc.Drawer.enabled = false;
+            dc.drawer.lifeTime = dc.lifetime;
+            dc.drawer.vertexDistance = 0.01f;
+            dc.drawer.angleDivisions = 20;
+            dc.drawer.widthCurve = Variables.trailWidth;
+            dc.drawer.widthMultiplier = RainDropTools.Random(Variables.sizeMinX, Variables.sizeMaxX);
+            dc.drawer.textureMode = LineTextureMode.Stretch;
+            dc.drawer.Clear();
+            dc.drawer.enabled = false;
         }
 
         private void Shuffle<T>(IList<T> list)
@@ -265,7 +265,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
         private Vector3 GetNextPositionWithFriction(FrictionFlowRainDrawerContainer dc, float downValue, int resolution,
             int widthResolution, float dt)
         {
-            var drawerTransform = dc.Drawer.transform;
+            var drawerTransform = dc.drawer.transform;
             Dummy.parent = drawerTransform.parent;
             Dummy.localRotation = drawerTransform.localRotation;
             Dummy.localPosition = drawerTransform.localPosition;
@@ -312,7 +312,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             }
 
             Vector3 frictionWay = PickRandomWeightedElement(widthPixels).Key;
-            frictionWay = dc.Drawer.transform.parent.InverseTransformPoint(frictionWay);
+            frictionWay = dc.drawer.transform.parent.InverseTransformPoint(frictionWay);
             Dummy.parent = null;
 
             return frictionWay;
@@ -326,19 +326,19 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             var nextPos = GetNextPositionWithFriction(dc, downValue, 150, 8, Time.deltaTime);
             nextPos = new Vector3(nextPos.x, nextPos.y, 0f);
             nextPos += progress * new Vector3(GlobalWind.x, GlobalWind.y, 0f);
-            dc.Drawer.vertexDistance = (1f * Distance * RainDropTools.GetCameraOrthographicSize(Camera).y) / (Variables.resolution * 10f);
+            dc.drawer.vertexDistance = (1f * Distance * RainDropTools.GetCameraOrthographicSize(Camera).y) / (Variables.resolution * 10f);
             dc.transform.localPosition = nextPos;
         }
 
         private void UpdateShader(FrictionFlowRainDrawerContainer dc, int index)
         {
             var progress = GetProgress(dc);
-            dc.Drawer.material.renderQueue = RenderQueue + index;
+            dc.drawer.material.renderQueue = RenderQueue + index;
 
             // Update shader if needed
-            if (dc.Drawer.material.shader.name != RainDropTools.GetShaderName(ShaderType))
+            if (dc.drawer.material.shader.name != RainDropTools.GetShaderName(ShaderType))
             {
-                dc.Drawer.material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue + index);
+                dc.drawer.material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue + index);
             }
 
             var distortionValue =
@@ -358,7 +358,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                 case RainDropTools.RainDropShaderType.Expensive:
                     if ((distortionValue + reliefValue + overlayColor.a + blurValue) / 4 < Tolerance)
                     {
-                        dc.Drawer.enabled = false;
+                        dc.drawer.enabled = false;
                         return;
                     }
 
@@ -366,7 +366,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                 case RainDropTools.RainDropShaderType.Cheap:
                     if (Math.Abs(distortionValue) < Tolerance)
                     {
-                        dc.Drawer.enabled = false;
+                        dc.drawer.enabled = false;
                         return;
                     }
 
@@ -374,7 +374,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                 case RainDropTools.RainDropShaderType.NoDistortion:
                     if (Math.Abs(reliefValue) < Tolerance && Math.Abs(overlayColor.a) < Tolerance)
                     {
-                        dc.Drawer.enabled = false;
+                        dc.drawer.enabled = false;
                         return;
                     }
 
@@ -384,7 +384,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             }
 
             RainDropTools.ApplyRainMaterialValue(
-                dc.Drawer.material,
+                dc.drawer.material,
                 ShaderType,
                 Variables.normalMap,
                 Variables.overlayTexture,
@@ -396,7 +396,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                 bloomValue,
                 Variables.darkness * Alpha
             );
-            dc.Drawer.enabled = true;
+            dc.drawer.enabled = true;
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             
             if (GetProgress(dc) >= 1.0f)
             {
-                dc.Drawer.Clear();
+                dc.drawer.Clear();
                 dc.currentState = DrawState.Disabled;
             }
             else
@@ -440,7 +440,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
         public float timeElapsed;
         public float lifetime;
 
-        public bool IsEnable => Drawer.material != null && Drawer.enabled;
+        public bool IsEnable => drawer.material != null && drawer.enabled;
 
         public FrictionFlowRainDrawerContainer(string name, Transform parent) : base(name, parent)
         {

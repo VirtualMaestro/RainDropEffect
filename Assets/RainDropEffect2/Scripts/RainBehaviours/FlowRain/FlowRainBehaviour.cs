@@ -18,7 +18,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
         private FlowRainController RainController { get; set; }
 
         public override int CurrentDrawCall =>
-            RainController == null ? 0 : RainController.drawers.FindAll(x => x.Drawer.enabled).Count;
+            RainController == null ? 0 : RainController.drawers.FindAll(x => x.drawer.enabled).Count;
 
         public override int MaxDrawCall => variables.maxRainSpawnCount;
         public override bool IsPlaying => RainController != null && RainController.IsPlaying;
@@ -159,7 +159,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
                 foreach (var dc in RainController.drawers)
                 {
                     Gizmos.color = dc.IsEnable ? Khaki : White;
-                    Gizmos.DrawWireSphere(dc.Drawer.transform.position, .5f);
+                    Gizmos.DrawWireSphere(dc.drawer.transform.position, .5f);
                 }
             }
 

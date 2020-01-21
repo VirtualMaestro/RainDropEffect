@@ -1,184 +1,156 @@
-﻿using RainDropEffect2.Scripts.Common;
+﻿using System;
+using System.Runtime.CompilerServices;
+using RainDropEffect2.Scripts.Common;
 using UnityEngine;
 
 namespace RainDropEffect2.Scripts.RainBehaviours.StaticRain
 {
     public class StaticRainController : MonoBehaviour
     {
+        private const float Tolerance = 0.0001f;
+
         public StaticRainVariables Variables { get; set; }
-        [HideInInspector]
         public int RenderQueue { get; set; }
-        public UnityEngine.Camera camera { get; set; }
+        public UnityEngine.Camera Camera { get; set; }
         public float Alpha { get; set; }
         public bool NoMoreRain { get; set; }
         public RainDropTools.RainDropShaderType ShaderType { get; set; }
-        public bool VRMode { get; set; }
-
-        public bool IsPlaying
-        {
-            get
-            {
-                return staticDrawer.currentState == DrawState.Playing;
-            }
-        }
-
-        public enum DrawState
-        {
-            Playing,
-            Disabled,
-        }
-
-        [System.Serializable]
-        public class StaticRainDrawerContainer : RainDrawerContainer<RainDrawer>
-        {
-            public DrawState currentState = DrawState.Disabled;
-            public float TimeElapsed = 0f;
-
-            public StaticRainDrawerContainer(string name, Transform parent) : base(name, parent) { }
-        }
-
+        public bool VrMode { get; set; }
+        public bool IsPlaying => staticDrawer.currentState == DrawState.Playing;
         public StaticRainDrawerContainer staticDrawer;
-
-
-        /// <summary>
-        /// Refresh this instance.
-        /// </summary>
 
         public void Refresh()
         {
             if (staticDrawer != null)
             {
-                DestroyImmediate(staticDrawer.Drawer.gameObject);
+                DestroyImmediate(staticDrawer.drawer.gameObject);
             }
-            staticDrawer = new StaticRainDrawerContainer("Static RainDrawer", this.transform);
-            staticDrawer.currentState = DrawState.Disabled;
+
+            staticDrawer = new StaticRainDrawerContainer("Static RainDrawer", transform)
+            {
+                currentState = DrawState.Disabled
+            };
+            
             InitializeInstance(staticDrawer);
         }
-
 
         public void Play()
         {
-            if (staticDrawer.currentState == DrawState.Playing)
-            {
-                return;
-            }
+            if (staticDrawer.currentState == DrawState.Playing) return;
 
             InitializeInstance(staticDrawer);
         }
 
-        /// <summary>
-        /// Update.
-        /// </summary>
         public void UpdateController()
         {
-            if (Variables == null)
-            {
-                return;
-            }
+            if (Variables == null) return;
 
             UpdateInstance(staticDrawer);
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private float GetProgress(StaticRainDrawerContainer dc)
         {
-            return dc.TimeElapsed / Variables.fadeTime;
+            return dc.timeElapsed / Variables.fadeTime;
         }
-
 
         /// <summary>
         /// Initializes the rain instance.
         /// </summary>
         private void InitializeInstance(StaticRainDrawerContainer dc)
         {
-            // Initialization
-            dc.TimeElapsed = 0f;
-            dc.Drawer.NormalMap = Variables.NormalMap;
-            dc.Drawer.ReliefTexture = Variables.OverlayTexture;
-            dc.Drawer.Hide();
+            dc.timeElapsed = 0f;
+            dc.drawer.NormalMap = Variables.normalMap;
+            dc.drawer.ReliefTexture = Variables.overlayTexture;
+            dc.drawer.Hide();
         }
-
 
         /// <summary>
         /// Update rain variables
         /// </summary>
-        /// <param name="dc">Dc.</param>
         private void UpdateInstance(StaticRainDrawerContainer dc)
         {
-            AnimationCurve fadeCurve = Variables.FadeinCurve;
+            var fadeCurve = Variables.fadeinCurve;
 
             // Update time
-            if (!NoMoreRain)
-            {
-                dc.TimeElapsed = Mathf.Min(Variables.fadeTime, dc.TimeElapsed + Time.deltaTime);
-            }
-            else
-            {
-                dc.TimeElapsed = Mathf.Max(0f, dc.TimeElapsed - Time.deltaTime);
-            }
+            dc.timeElapsed = !NoMoreRain ? Mathf.Min(Variables.fadeTime, dc.timeElapsed + Time.deltaTime) : Mathf.Max(0f, dc.timeElapsed - Time.deltaTime);
 
-            if (dc.TimeElapsed == 0f)
+            if (Math.Abs(dc.timeElapsed) < Tolerance)
             {
-                dc.Drawer.Hide();
+                dc.drawer.Hide();
                 dc.currentState = DrawState.Disabled;
                 return;
             }
-            else
-            {
-                dc.currentState = DrawState.Playing;
-            }
+         
+            dc.currentState = DrawState.Playing;
 
-            if (Variables.FullScreen)
+            if (Variables.fullScreen)
             {
-                Vector2 orthSize = RainDropTools.GetCameraOrthographicSize(this.camera);
-                Vector3 targetScale = new Vector3(
+                var orthSize = RainDropTools.GetCameraOrthographicSize(this.Camera);
+                var targetScale = new Vector3(
                     orthSize.x / 2f,
                     orthSize.y / 2f,
                     0f
                 );
-                if (VRMode)
-                {
-                    targetScale += Vector3.one * 0.02f;
-                }
+                
+                if (VrMode) targetScale += Vector3.one * 0.02f;
+                
                 dc.transform.localScale = targetScale;
                 dc.transform.localPosition = Vector3.zero;
             }
             else
             {
                 dc.transform.localScale = new Vector3(
-                    Variables.SizeX,
-                    Variables.SizeY,
+                    Variables.sizeX,
+                    Variables.sizeY,
                     1f
                 );
 
-                Vector3 p = camera.ScreenToWorldPoint(
+                var p = Camera.ScreenToWorldPoint(
                     new Vector3(
-                        -Screen.width * Variables.SpawnOffsetX + Screen.width / 2,
-                        -Screen.height * Variables.SpawnOffsetY + Screen.height / 2,
+                        -Screen.width * Variables.spawnOffsetX + Screen.width / 2.0f,
+                        -Screen.height * Variables.spawnOffsetY + Screen.height / 2.0f,
                         0f
                     ));
-                dc.transform.localPosition = transform.InverseTransformPoint(p);
-                dc.transform.localPosition -= Vector3.forward * dc.transform.localPosition.z;
+
+                var position = transform.InverseTransformPoint(p);
+                dc.transform.localPosition = position - Vector3.forward * position.z;
             }
 
-            float progress = GetProgress(dc);
-            dc.Drawer.RenderQueue = RenderQueue;
-            dc.Drawer.NormalMap = Variables.NormalMap;
-            dc.Drawer.ReliefTexture = Variables.OverlayTexture;
-            dc.Drawer.OverlayColor = new Color(
-                Variables.OverlayColor.r,
-                Variables.OverlayColor.g,
-                Variables.OverlayColor.b,
-                Variables.OverlayColor.a * fadeCurve.Evaluate(progress) * Alpha
+            var progress = GetProgress(dc);
+            dc.drawer.RenderQueue = RenderQueue;
+            dc.drawer.NormalMap = Variables.normalMap;
+            dc.drawer.ReliefTexture = Variables.overlayTexture;
+            dc.drawer.OverlayColor = new Color(
+                Variables.overlayColor.r,
+                Variables.overlayColor.g,
+                Variables.overlayColor.b,
+                Variables.overlayColor.a * fadeCurve.Evaluate(progress) * Alpha
             );
-            dc.Drawer.DistortionStrength = Variables.DistortionValue * fadeCurve.Evaluate(progress) * Alpha;
-            dc.Drawer.ReliefValue = Variables.ReliefValue * fadeCurve.Evaluate(progress) * Alpha;
-            dc.Drawer.Blur = Variables.Blur * fadeCurve.Evaluate(progress) * Alpha;
-            dc.Drawer.BloomTexture = Variables.BloomTexture;
-            dc.Drawer.Bloom = Variables.Bloom * fadeCurve.Evaluate(progress) * Alpha;
-            dc.Drawer.Darkness = Variables.Darkness;
-            dc.Drawer.ShaderType = ShaderType;
-            dc.Drawer.Show();
+
+            dc.drawer.DistortionStrength = Variables.distortionValue * fadeCurve.Evaluate(progress) * Alpha;
+            dc.drawer.ReliefValue = Variables.reliefValue * fadeCurve.Evaluate(progress) * Alpha;
+            dc.drawer.Blur = Variables.blur * fadeCurve.Evaluate(progress) * Alpha;
+            dc.drawer.BloomTexture = Variables.bloomTexture;
+            dc.drawer.Bloom = Variables.bloom * fadeCurve.Evaluate(progress) * Alpha;
+            dc.drawer.Darkness = Variables.darkness;
+            dc.drawer.ShaderType = ShaderType;
+            dc.drawer.Show();
         }
+    }
+    
+    public enum DrawState
+    {
+        Playing,
+        Disabled,
+    }
+
+    [Serializable]
+    public class StaticRainDrawerContainer : RainDrawerContainer<RainDrawer>
+    {
+        public DrawState currentState = DrawState.Disabled;
+        public float timeElapsed;
+
+        public StaticRainDrawerContainer(string name, Transform parent) : base(name, parent) { }
     }
 }

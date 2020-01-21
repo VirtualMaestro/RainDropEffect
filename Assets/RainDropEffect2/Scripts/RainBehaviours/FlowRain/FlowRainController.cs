@@ -39,7 +39,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
         {
             foreach (var d in drawers)
             {
-                DestroyImmediate(d.Drawer.gameObject);
+                DestroyImmediate(d.drawer.gameObject);
             }
 
             drawers.Clear();
@@ -143,11 +143,11 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
 
             foreach (var rem in removeList)
             {
-                rem.Drawer.Clear();
-                DestroyImmediate(rem.Drawer.gameObject);
+                rem.drawer.Clear();
+                DestroyImmediate(rem.drawer.gameObject);
             }
 
-            drawers.RemoveAll(x => x.Drawer == null);
+            drawers.RemoveAll(x => x.drawer == null);
         }
 
         private void CheckSpawnTime()
@@ -215,17 +215,17 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
                 Variables.darkness
             );
 
-            dc.Drawer.lifeTime = dc.lifetime;
-            dc.Drawer.vertexDistance = 0.01f;
-            dc.Drawer.angleDivisions = 20;
-            dc.Drawer.material = mat;
-            dc.Drawer.widthCurve = Variables.trailWidth;
-            dc.Drawer.widthMultiplier = RainDropTools.Random(Variables.sizeMinX, Variables.sizeMaxX);
-            dc.Drawer.textureMode = LineTextureMode.Stretch;
-            dc.Drawer.vertexDistance = (1f * this.Distance * RainDropTools.GetCameraOrthographicSize(this.Camera).y) /
+            dc.drawer.lifeTime = dc.lifetime;
+            dc.drawer.vertexDistance = 0.01f;
+            dc.drawer.angleDivisions = 20;
+            dc.drawer.material = mat;
+            dc.drawer.widthCurve = Variables.trailWidth;
+            dc.drawer.widthMultiplier = RainDropTools.Random(Variables.sizeMinX, Variables.sizeMaxX);
+            dc.drawer.textureMode = LineTextureMode.Stretch;
+            dc.drawer.vertexDistance = (1f * this.Distance * RainDropTools.GetCameraOrthographicSize(this.Camera).y) /
                                        (Variables.resolution * 10f);
-            dc.Drawer.Clear();
-            dc.Drawer.enabled = false;
+            dc.drawer.Clear();
+            dc.drawer.enabled = false;
         }
 
         private void UpdateTransform(FlowRainDrawerContainer dc)
@@ -269,12 +269,12 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
         private void UpdateShader(FlowRainDrawerContainer dc, int index)
         {
             float progress = GetProgress(dc);
-            dc.Drawer.material.renderQueue = RenderQueue + index;
+            dc.drawer.material.renderQueue = RenderQueue + index;
 
             // Update shader if needed
-            if (dc.Drawer.material.shader.name != RainDropTools.GetShaderName(ShaderType))
+            if (dc.drawer.material.shader.name != RainDropTools.GetShaderName(ShaderType))
             {
-                dc.Drawer.material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue + index);
+                dc.drawer.material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue + index);
             }
 
             float distortionValue =
@@ -294,7 +294,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
                 case RainDropTools.RainDropShaderType.Expensive:
                     if (distortionValue == 0f && reliefValue == 0f && overlayColor.a == 0f && blurValue == 0f)
                     {
-                        dc.Drawer.enabled = false;
+                        dc.drawer.enabled = false;
                         return;
                     }
 
@@ -302,7 +302,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
                 case RainDropTools.RainDropShaderType.Cheap:
                     if (distortionValue == 0f)
                     {
-                        dc.Drawer.enabled = false;
+                        dc.drawer.enabled = false;
                         return;
                     }
 
@@ -310,7 +310,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
                 case RainDropTools.RainDropShaderType.NoDistortion:
                     if (reliefValue == 0f && overlayColor.a == 0f)
                     {
-                        dc.Drawer.enabled = false;
+                        dc.drawer.enabled = false;
                         return;
                     }
 
@@ -318,7 +318,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
             }
 
             RainDropTools.ApplyRainMaterialValue(
-                dc.Drawer.material,
+                dc.drawer.material,
                 ShaderType,
                 Variables.normalMap,
                 Variables.overlayTexture,
@@ -330,7 +330,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
                 Variables.darkness * Alpha
             );
             
-            dc.Drawer.enabled = true;
+            dc.drawer.enabled = true;
         }
 
         private void UpdateInstance(FlowRainDrawerContainer dc, int index)
@@ -339,7 +339,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
 
             if (GetProgress(dc) >= 1.0f)
             {
-                dc.Drawer.Clear();
+                dc.drawer.Clear();
                 dc.currentState = DrawState.Disabled;
             }
             else
@@ -386,7 +386,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
         public float timeElapsed;
         public float lifetime;
 
-        public bool IsEnable => Drawer.material != null && Drawer.enabled;
+        public bool IsEnable => drawer.material != null && drawer.enabled;
 
         public FlowRainDrawerContainer(string name, Transform parent) : base(name, parent)
         {

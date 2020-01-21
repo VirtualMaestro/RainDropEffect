@@ -15,7 +15,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
         private SimpleRainController RainController { get; set; }
 
         [SerializeField] 
-        private SimpleRainVariables variables;
+        public SimpleRainVariables variables;
 
         public override int CurrentDrawCall => RainController == null ? 0 : RainController.drawers.FindAll(x => x.drawer.IsEnabled).Count;
         public override int MaxDrawCall => variables.maxRainSpawnCount;

@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using RainDropEffect2.Scripts.Common;
 using UnityEngine;
 
@@ -8,77 +10,28 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 {
     public class FrictionFlowRainController : MonoBehaviour
     {
+        private const float Tolerance = 0.0001f;
 
         public FrictionFlowRainVariables Variables { get; set; }
-        [HideInInspector]
         public int RenderQueue { get; set; }
-        public UnityEngine.Camera camera { get; set; }
+        public UnityEngine.Camera Camera { get; set; }
         public float Alpha { get; set; }
         public Vector2 GlobalWind { get; set; }
         public Vector3 GForceVector { get; set; }
         public bool NoMoreRain { get; set; }
         public RainDropTools.RainDropShaderType ShaderType { get; set; }
         public float Distance { get; set; }
-
-        private int oldSpawnLimit = 0;
-        private bool isOneShot = false;
-        private bool isWaitingDelay = false;
-        private float oneShotTimeleft = 0f;
-        private float timeElapsed = 0f;
-        private float interval = 0f;
-
-        public bool IsPlaying
-        {
-            get
-            {
-                return drawers.FindAll(t => t.currentState == DrawState.Disabled).Count != drawers.Count;
-            }
-        }
-
-        public enum DrawState
-        {
-            Playing,
-            Disabled,
-        }
-
-        [System.Serializable]
-        public class FrictionFlowRainDrawerContainer : RainDrawerContainer<DropTrail>
-        {
-            public DrawState currentState = DrawState.Disabled;
-            public float initRnd = 0f;
-            public float posXDt;
-            public float rnd1;
-            public float fluctuationRate = 5f;
-            public float acceleration = 0.1f;
-
-            public Vector3 startPos;
-            public float TimeElapsed = 0f;
-            public float lifetime = 0f;
-
-            public bool IsEnable
-            {
-                get { return Drawer.material != null && Drawer.enabled == true; }
-            }
-
-            public FrictionFlowRainDrawerContainer(string name, Transform parent) : base(name, parent) { }
-        }
-
         public List<FrictionFlowRainDrawerContainer> drawers = new List<FrictionFlowRainDrawerContainer>();
 
-        Transform _dummy;
-        Transform dummy
-        {
-            get
-            {
-                if (!_dummy)
-                    _dummy = RainDropTools.CreateHiddenObject("dummy", this.transform);
-                return _dummy;
-            }
-        }
+        private Transform _dummy;
+        private bool _isOneShot;
+        private bool _isWaitingDelay;
+        private float _oneShotTimeleft;
+        private float _timeElapsed;
+        private float _interval;
 
-        /// <summary>
-        /// Refresh this instance.
-        /// </summary>
+        public bool IsPlaying => drawers.FindAll(t => t.currentState == DrawState.Disabled).Count != drawers.Count;
+        private Transform Dummy => _dummy == null ? _dummy = RainDropTools.CreateHiddenObject("dummy", transform) : _dummy;
 
         public void Refresh()
         {
@@ -89,278 +42,265 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
             drawers.Clear();
 
-            for (int i = 0; i < Variables.MaxRainSpawnCount; i++)
+            for (var i = 0; i < Variables.maxRainSpawnCount; i++)
             {
-                FrictionFlowRainDrawerContainer container = new FrictionFlowRainDrawerContainer("Friction Flow RainDrawer " + i, this.transform);
-                container.currentState = DrawState.Disabled;
+                var container = new FrictionFlowRainDrawerContainer($"Friction Flow RainDrawer {i}", transform)
+                {
+                    currentState = DrawState.Disabled
+                };
+
                 drawers.Add(container);
             }
         }
 
-
-        /// <summary>
-        /// Play this instance.
-        /// </summary>
         public void Play()
         {
-            StartCoroutine(PlayDelay(Variables.Delay));
+            StartCoroutine(PlayDelay(Variables.delay));
         }
 
-
-        IEnumerator PlayDelay(float delay)
+        private IEnumerator PlayDelay(float delay)
         {
-            float t = 0f;
+            var t = 0f;
+            
             while (t <= delay)
             {
-                isWaitingDelay = true;
+                _isWaitingDelay = true;
                 t += Time.deltaTime;
                 yield return null;
             }
-            isWaitingDelay = false;
+
+            _isWaitingDelay = false;
 
             if (drawers.Find(x => x.currentState == DrawState.Playing) != null)
             {
                 yield break;
             }
 
-            for (int i = 0; i < drawers.Count; i++)
+            foreach (var drawerContainer in drawers)
             {
-                InitializeDrawer(drawers[i]);
-                drawers[i].currentState = DrawState.Disabled;
+                InitializeDrawer(drawerContainer);
+                drawerContainer.currentState = DrawState.Disabled;
             }
 
-            isOneShot = Variables.PlayOnce;
-            if (isOneShot)
-            {
-                oneShotTimeleft = Variables.Duration;
-            }
+            _isOneShot = Variables.playOnce;
 
-            yield break;
+            if (_isOneShot) _oneShotTimeleft = Variables.duration;
         }
-
-
-        /// <summary>
-        /// Update.
-        /// </summary>
+        
         public void UpdateController()
         {
-            if (Variables == null)
-            {
-                return;
-            }
+            if (Variables == null) return;
 
             CheckSpawnNum();
 
             if (NoMoreRain)
             {
-                timeElapsed = 0f;
+                _timeElapsed = 0f;
             }
-            else if (isOneShot)
+            else if (_isOneShot)
             {
-                oneShotTimeleft -= Time.deltaTime;
-                if (oneShotTimeleft > 0f)
+                _oneShotTimeleft -= Time.deltaTime;
+                if (_oneShotTimeleft > 0f)
                 {
                     CheckSpawnTime();
                 }
             }
-            else if (!isWaitingDelay)
+            else if (!_isWaitingDelay)
             {
                 CheckSpawnTime();
             }
 
-            for (int i = 0; i < drawers.Count; i++)
+            for (var i = 0; i < drawers.Count; i++)
             {
                 UpdateInstance(drawers[i], i);
             }
         }
 
-
         private void CheckSpawnNum()
         {
-            int diff = Variables.MaxRainSpawnCount - drawers.Count();
+            var diff = Variables.maxRainSpawnCount - drawers.Count;
 
             // MaxRainSpawnCount was increased
             if (diff > 0)
             {
-                for (int i = 0; i < diff; i++)
+                for (var i = 0; i < diff; i++)
                 {
-                    FrictionFlowRainDrawerContainer container = new FrictionFlowRainDrawerContainer("Friction Flow RainDrawer " + (drawers.Count() + i), this.transform);
-                    container.currentState = DrawState.Disabled;
+                    var container = new FrictionFlowRainDrawerContainer($"Friction Flow RainDrawer {drawers.Count + i}", transform) 
+                        {currentState = DrawState.Disabled};
                     drawers.Add(container);
                 }
             }
 
             // MaxRainSpawnCount was decreased
-            if (diff < 0)
+            if (diff >= 0) return;
+            var rmcnt = -diff;
+            var removeList = drawers.FindAll(x => x.currentState != DrawState.Playing).Take(rmcnt).ToList();
+            
+            if (removeList.Count < rmcnt)
             {
-                int rmcnt = -diff;
-                List<FrictionFlowRainDrawerContainer> removeList = drawers.FindAll(x => x.currentState != DrawState.Playing).Take(rmcnt).ToList();
-                if (removeList.Count() < rmcnt)
-                {
-                    removeList.AddRange(drawers.FindAll(x => x.currentState == DrawState.Playing).Take(rmcnt - removeList.Count()));
-                }
-
-                foreach (var rem in removeList)
-                {
-                    rem.Drawer.Clear();
-                    DestroyImmediate(rem.Drawer.gameObject);
-                }
-
-                drawers.RemoveAll(x => x.Drawer == null);
+                removeList.AddRange(drawers.FindAll(x => x.currentState == DrawState.Playing)
+                    .Take(rmcnt - removeList.Count()));
             }
-        }
 
+            foreach (var rem in removeList)
+            {
+                rem.Drawer.Clear();
+                DestroyImmediate(rem.Drawer.gameObject);
+            }
+
+            drawers.RemoveAll(x => x.Drawer == null);
+        }
 
         private void CheckSpawnTime()
         {
-            if (interval == 0f) 
+            if (Math.Abs(_interval) < Tolerance)
             {
-                interval = Variables.Duration / RainDropTools.Random(Variables.EmissionRateMin, Variables.EmissionRateMax);
+                _interval = Variables.duration /
+                            RainDropTools.Random(Variables.emissionRateMin, Variables.emissionRateMax);
             }
 
-            timeElapsed += Time.deltaTime;
-            if (timeElapsed >= interval)
+            _timeElapsed += Time.deltaTime;
+            
+            if (!(_timeElapsed >= _interval)) return;
+            
+            var spawnNum = (int) Mathf.Min(_timeElapsed / _interval,
+                Variables.maxRainSpawnCount - drawers.FindAll(x => x.currentState == DrawState.Playing).Count);
+            
+            for (var i = 0; i < spawnNum; i++)
             {
-                int spawnNum = (int) Mathf.Min ((timeElapsed / interval), Variables.MaxRainSpawnCount - drawers.FindAll (x => x.currentState == DrawState.Playing).Count ());
-                for (int i = 0; i < spawnNum; i++)
-                {
-                    Spawn();
-                }
-                interval = Variables.Duration / RainDropTools.Random(Variables.EmissionRateMin, Variables.EmissionRateMax);
-                timeElapsed = 0f;
+                Spawn();
             }
+
+            _interval = Variables.duration /
+                        RainDropTools.Random(Variables.emissionRateMin, Variables.emissionRateMax);
+            _timeElapsed = 0f;
         }
-
 
         private void Spawn()
         {
             var spawnRain = drawers.Find(x => x.currentState == DrawState.Disabled);
-            if (spawnRain == null)
-            {
-                //Debug.LogError ("Spawn limit!");
-                return;
-            }
-
+            if (spawnRain == null) return;
+           
             InitializeDrawer(spawnRain);
             spawnRain.currentState = DrawState.Playing;
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private float GetProgress(FrictionFlowRainDrawerContainer dc)
         {
-            return dc.TimeElapsed / dc.lifetime;
+            return dc.timeElapsed / dc.lifetime;
         }
-
 
         private void InitializeDrawer(FrictionFlowRainDrawerContainer dc)
         {
-            dc.TimeElapsed = 0f;
-            dc.lifetime = RainDropTools.Random(Variables.LifetimeMin, Variables.LifetimeMax);
-            dc.acceleration = RainDropTools.Random(Variables.AccelerationMin, Variables.AccelerationMax);
-            dc.transform.localPosition = RainDropTools.GetSpawnLocalPos(this.transform, camera, 0f, Variables.SpawnOffsetY);
+            dc.timeElapsed = 0f;
+            dc.lifetime = RainDropTools.Random(Variables.lifetimeMin, Variables.lifetimeMax);
+            dc.acceleration = RainDropTools.Random(Variables.accelerationMin, Variables.accelerationMax);
+            dc.transform.localPosition = RainDropTools.GetSpawnLocalPos(transform, Camera, 0f, Variables.spawnOffsetY);
             dc.startPos = dc.transform.localPosition;
+            dc.acceleration = RainDropTools.Random(Variables.accelerationMin, Variables.accelerationMax);
 
-            dc.acceleration = RainDropTools.Random(Variables.AccelerationMin, Variables.AccelerationMax);
-
-            if (dc.Drawer.material == null)
+            if (ReferenceEquals(dc.Drawer.material, null))
             {
-                Material mat = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue);
+                var mat = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue);
+                
                 RainDropTools.ApplyRainMaterialValue(
                     mat,
                     ShaderType,
-                    Variables.NormalMap,
-                    Variables.OverlayTexture,
-                    Variables.DistortionValue,
-                    Variables.OverlayColor,
-                    Variables.ReliefValue,
-                    Variables.Blur,
-                    Variables.BloomTexture,
-                    Variables.Bloom,
-                    Variables.Darkness
+                    Variables.normalMap,
+                    Variables.overlayTexture,
+                    Variables.distortionValue,
+                    Variables.overlayColor,
+                    Variables.reliefValue,
+                    Variables.blur,
+                    Variables.bloomTexture,
+                    Variables.bloom,
+                    Variables.darkness
                 );
+                
                 dc.Drawer.material = mat;
             }
-        
+
             dc.Drawer.lifeTime = dc.lifetime;
             dc.Drawer.vertexDistance = 0.01f;
             dc.Drawer.angleDivisions = 20;
-            dc.Drawer.widthCurve = Variables.TrailWidth;
-            dc.Drawer.widthMultiplier = RainDropTools.Random(Variables.SizeMinX, Variables.SizeMaxX);
+            dc.Drawer.widthCurve = Variables.trailWidth;
+            dc.Drawer.widthMultiplier = RainDropTools.Random(Variables.sizeMinX, Variables.sizeMaxX);
             dc.Drawer.textureMode = LineTextureMode.Stretch;
             dc.Drawer.Clear();
             dc.Drawer.enabled = false;
         }
 
-
-        private void Shuffle<T>(List<T> list)
+        private void Shuffle<T>(IList<T> list)
         {
-            int cnt = list.Count;
+            var cnt = list.Count;
+            
             while (cnt > 1)
             {
                 cnt--;
-                int k = RainDropTools.Random(0, cnt + 1);
-                T value = list[k];
-                list[k] = list[cnt];
+                
+                var rnd = RainDropTools.Random(0, cnt + 1);
+                var value = list[rnd];
+                list[rnd] = list[cnt];
                 list[cnt] = value;
             }
         }
-
 
         private KeyValuePair<Vector3, float> PickRandomWeightedElement(Dictionary<Vector3, float> dictionary)
         {
             var kvList = dictionary.ToList();
             // If all the value is same, then we return a random element
-            float firstVal = kvList[0].Value;
-            if (kvList.FindAll(t => t.Value == firstVal).Count() == kvList.Count())
+            var firstVal = kvList[0].Value;
+            
+            if (kvList.FindAll(t => Math.Abs(t.Value - firstVal) < Tolerance).Count == kvList.Count)
             {
                 Shuffle(kvList);
                 return kvList[0];
             }
+
             kvList.Sort((x, y) => x.Value.CompareTo(y.Value));
-            //return RainDropTools.GetWeightedElement(kvList);
-            return kvList.FirstOrDefault(x => x.Value == dictionary.Values.Max());
-            //return new KeyValuePair<Vector3, float>(Vector3.zero, 0f);
+            return kvList.FirstOrDefault(x => Math.Abs(x.Value - dictionary.Values.Max()) < Tolerance);
         }
 
-
-        private Vector3 GetNextPositionWithFriction(FrictionFlowRainDrawerContainer dc, float downValue, int resolution, int widthResolution, float dt)
+        private Vector3 GetNextPositionWithFriction(FrictionFlowRainDrawerContainer dc, float downValue, int resolution,
+            int widthResolution, float dt)
         {
-            dummy.parent = dc.Drawer.transform.parent;
-            dummy.localRotation = dc.Drawer.transform.localRotation;
-            dummy.localPosition = dc.Drawer.transform.localPosition;
+            var drawerTransform = dc.Drawer.transform;
+            Dummy.parent = drawerTransform.parent;
+            Dummy.localRotation = drawerTransform.localRotation;
+            Dummy.localPosition = drawerTransform.localPosition;
 
-            int texW = Variables.FrictionMap.width;
-            int texH = Variables.FrictionMap.height;
-            int iter = (int)(Mathf.Clamp(resolution * dt, 2, 5));
-            //Vector3 frictionWay = dc.Drawer.transform.localPosition;
-            Dictionary<Vector3, float> widthPixels = new Dictionary<Vector3, float>();
+            var texW = Variables.frictionMap.width;
+            var texH = Variables.frictionMap.height;
+            var iter = (int) (Mathf.Clamp(resolution * dt, 2, 5));
+
+            var widthPixels = new Dictionary<Vector3, float>();
 
             // Get the gravity forced vector
-            Vector3 downward = RainDropTools.GetGForcedScreenMovement(this.camera.transform, this.GForceVector);
+            Vector3 downward = RainDropTools.GetGForcedScreenMovement(this.Camera.transform, this.GForceVector);
             downward = downward.normalized;
 
-            float angl = Mathf.Rad2Deg * Mathf.Atan2(downward.y, downward.x);
+            var angle = Mathf.Rad2Deg * Mathf.Atan2(downward.y, downward.x);
 
-            //dummy.localPosition += downValue * new Vector3(downward.x, downward.y, 0f);
-            dummy.localRotation = Quaternion.AngleAxis(angl + 90f, Vector3.forward);
+            Dummy.localRotation = Quaternion.AngleAxis(angle + 90f, Vector3.forward);
 
-            float step = downValue * (1f / iter) * 3f / widthResolution;
-            int resol = Mathf.Clamp(2 * widthResolution, 2, 5);
+            var step = downValue * (1f / iter) * 3f / widthResolution;
+            var clampedResolution = Mathf.Clamp(2 * widthResolution, 2, 5);
 
-            for (int i = 0; i < iter; i++)
+            for (var i = 0; i < iter; i++)
             {
-                dummy.localPosition += downValue * (1f / iter) * new Vector3(downward.x, downward.y, 0f);
+                Dummy.localPosition += downValue * (1f / iter) * new Vector3(downward.x, downward.y, 0f);
 
-                for (int j = 0; j <= resol; j++)
+                for (var j = 0; j <= clampedResolution; j++)
                 {
-                    float ww = (j * step - (resol / 2f) * step);
-                    Vector3 downPos = dummy.TransformPoint(new Vector3(ww, 0f, 0f));
-                    Vector3 downVector2viewPoint = this.camera.WorldToViewportPoint(downPos);
+                    var ww = (j * step - (clampedResolution / 2f) * step);
+                    var downPos = Dummy.TransformPoint(new Vector3(ww, 0f, 0f));
+                    var downVector2ViewPoint = Camera.WorldToViewportPoint(downPos);
 
                     // Get the pixel grayscale
-                    float pixel = Variables.FrictionMap.GetPixel(
-                        (int)(texW * downVector2viewPoint.x),
-                        (int)(texH * -downVector2viewPoint.y)
+                    var pixel = Variables.frictionMap.GetPixel(
+                        (int) (texW * downVector2ViewPoint.x),
+                        (int) (texH * -downVector2ViewPoint.y)
                     ).grayscale;
 
                     // If never added to the list, we add it
@@ -370,67 +310,29 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                     }
                 }
             }
-        
+
             Vector3 frictionWay = PickRandomWeightedElement(widthPixels).Key;
             frictionWay = dc.Drawer.transform.parent.InverseTransformPoint(frictionWay);
-            dummy.parent = null;
+            Dummy.parent = null;
 
             return frictionWay;
-
-            // OLD
-            /*for (int i = 0; i < iter; i++)
-        {
-            float dv = downValue * ((float)i / iter);
-            widthPixels.Clear();
-
-            for (int j = 0; j <= 2*widthResolution; j++)
-            {
-                Vector3 downVector = frictionWay + (downward * dv);
-
-                // TODO: Use normal vector of downward to search pixels
-                if (Mathf.Abs(downward.y) > Mathf.Abs(downward.x))
-                    downVector += Vector3.left * dv + Vector3.right * dv * ((float)j / widthResolution);
-                else
-                    downVector += Vector3.up * dv + Vector3.down * dv * ((float)j / widthResolution);
-                // END OF todo
-
-                Vector3 downVector2viewPoint = camera.WorldToViewportPoint(downVector);
-                float pixel = Variables.FrictionMap.GetPixel(
-                    (int)(texW * downVector2viewPoint.x),
-                    (int)(texH * -downVector2viewPoint.y)
-                ).grayscale;
-                if (!widthPixels.ContainsKey(downVector))
-                    widthPixels.Add(downVector, 1.0f-pixel);
-            }
-
-            Vector3 keyVector = PickRandomWeightedElement(widthPixels).Key;
-            frictionWay = keyVector;
         }
-
-        return frictionWay;*/
-        }
-
 
         private void UpdateTransform(FrictionFlowRainDrawerContainer dc)
         {
-            float progress = GetProgress(dc);
-            float t = dc.TimeElapsed;
-            Vector3 nextPos = GetNextPositionWithFriction(
-                dc: dc,
-                downValue: ((1 / 2f) * t * t * dc.acceleration * 0.1f) + (Variables.InitialVelocity * t * 0.01f),
-                resolution: 150,
-                widthResolution: 8,
-                dt: Time.deltaTime);
+            var progress = GetProgress(dc);
+            var t = dc.timeElapsed;
+            var downValue = 1 / 2f * t * t * dc.acceleration * 0.1f + Variables.initialVelocity * t * 0.01f;
+            var nextPos = GetNextPositionWithFriction(dc, downValue, 150, 8, Time.deltaTime);
             nextPos = new Vector3(nextPos.x, nextPos.y, 0f);
             nextPos += progress * new Vector3(GlobalWind.x, GlobalWind.y, 0f);
-            dc.Drawer.vertexDistance = (1f * this.Distance * RainDropTools.GetCameraOrthographicSize(this.camera).y) / (Variables.Resolution * 10f);
+            dc.Drawer.vertexDistance = (1f * Distance * RainDropTools.GetCameraOrthographicSize(Camera).y) / (Variables.resolution * 10f);
             dc.transform.localPosition = nextPos;
         }
 
-
         private void UpdateShader(FrictionFlowRainDrawerContainer dc, int index)
         {
-            float progress = GetProgress(dc);
+            var progress = GetProgress(dc);
             dc.Drawer.material.renderQueue = RenderQueue + index;
 
             // Update shader if needed
@@ -439,79 +341,109 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                 dc.Drawer.material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue + index);
             }
 
-            float distortionValue = Variables.DistortionValue * Variables.DistortionOverLifetime.Evaluate(progress) * Alpha;
-            float reliefValue = Variables.ReliefValue * Variables.ReliefOverLifetime.Evaluate(progress) * Alpha;
-            float blurValue = Variables.Blur * Variables.BlurOverLifetime.Evaluate(progress) * Alpha;
-            float bloomValue = Variables.Bloom * Variables.BloomOverLifetime.Evaluate(progress) * Alpha;
-            Color overlayColor = new Color(
-                Variables.OverlayColor.r,
-                Variables.OverlayColor.g,
-                Variables.OverlayColor.b,
-                Variables.OverlayColor.a * Variables.AlphaOverLifetime.Evaluate(progress) * Alpha
+            var distortionValue =
+                Variables.distortionValue * Variables.distortionOverLifetime.Evaluate(progress) * Alpha;
+            var reliefValue = Variables.reliefValue * Variables.reliefOverLifetime.Evaluate(progress) * Alpha;
+            var blurValue = Variables.blur * Variables.blurOverLifetime.Evaluate(progress) * Alpha;
+            var bloomValue = Variables.bloom * Variables.bloomOverLifetime.Evaluate(progress) * Alpha;
+            var overlayColor = new Color(
+                Variables.overlayColor.r,
+                Variables.overlayColor.g,
+                Variables.overlayColor.b,
+                Variables.overlayColor.a * Variables.alphaOverLifetime.Evaluate(progress) * Alpha
             );
 
             switch (ShaderType)
             {
                 case RainDropTools.RainDropShaderType.Expensive:
-                    if (distortionValue == 0f && reliefValue == 0f && overlayColor.a == 0f && blurValue == 0f)
+                    if ((distortionValue + reliefValue + overlayColor.a + blurValue) / 4 < Tolerance)
                     {
                         dc.Drawer.enabled = false;
                         return;
                     }
+
                     break;
                 case RainDropTools.RainDropShaderType.Cheap:
-                    if (distortionValue == 0f)
+                    if (Math.Abs(distortionValue) < Tolerance)
                     {
                         dc.Drawer.enabled = false;
                         return;
                     }
+
                     break;
                 case RainDropTools.RainDropShaderType.NoDistortion:
-                    if (reliefValue == 0f && overlayColor.a == 0f)
+                    if (Math.Abs(reliefValue) < Tolerance && Math.Abs(overlayColor.a) < Tolerance)
                     {
                         dc.Drawer.enabled = false;
                         return;
                     }
+
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             RainDropTools.ApplyRainMaterialValue(
                 dc.Drawer.material,
                 ShaderType,
-                Variables.NormalMap,
-                Variables.OverlayTexture,
+                Variables.normalMap,
+                Variables.overlayTexture,
                 distortionValue,
                 overlayColor,
                 reliefValue,
                 blurValue,
-                Variables.BloomTexture,
+                Variables.bloomTexture,
                 bloomValue,
-                Variables.Darkness * Alpha
+                Variables.darkness * Alpha
             );
             dc.Drawer.enabled = true;
         }
 
-
         /// <summary>
         /// Update rain variables
         /// </summary>
-        /// <param name="i">The index.</param>
         private void UpdateInstance(FrictionFlowRainDrawerContainer dc, int index)
         {
-            if (dc.currentState == DrawState.Playing)
+            if (dc.currentState != DrawState.Playing) return;
+            
+            if (GetProgress(dc) >= 1.0f)
             {
-                if (GetProgress(dc) >= 1.0f)
-                {
-                    dc.Drawer.Clear();
-                    dc.currentState = DrawState.Disabled;
-                }
-                else
-                {
-                    dc.TimeElapsed += Time.deltaTime;
-                    UpdateTransform(dc);
-                    UpdateShader(dc, index);
-                }
+                dc.Drawer.Clear();
+                dc.currentState = DrawState.Disabled;
             }
+            else
+            {
+                dc.timeElapsed += Time.deltaTime;
+                UpdateTransform(dc);
+                UpdateShader(dc, index);
+            }
+        }
+    }
+    
+    public enum DrawState
+    {
+        Playing,
+        Disabled,
+    }
+    
+    [Serializable]
+    public class FrictionFlowRainDrawerContainer : RainDrawerContainer<DropTrail>
+    {
+        public DrawState currentState = DrawState.Disabled;
+        public float initRnd = 0f;
+        public float posXDt;
+        public float rnd1;
+        public float fluctuationRate = 5f;
+        public float acceleration = 0.1f;
+
+        public Vector3 startPos;
+        public float timeElapsed;
+        public float lifetime;
+
+        public bool IsEnable => Drawer.material != null && Drawer.enabled;
+
+        public FrictionFlowRainDrawerContainer(string name, Transform parent) : base(name, parent)
+        {
         }
     }
 }

@@ -142,10 +142,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            UnityEngine.Camera rainCam = GetComponentInParent<UnityEngine.Camera>();
+            var rainCam = GetComponentInParent<UnityEngine.Camera>();
 
-            if (rainCam == null)
-                return;
+            if (rainCam == null) return;
 
             if (RainController != null)
             {

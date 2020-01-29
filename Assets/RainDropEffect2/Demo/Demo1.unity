@@ -159,6 +159,76 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.overlayColor.r
+      value: 0.8632076
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.overlayColor.g
+      value: 0.99350667
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.overlayColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.darkness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.fadeTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.sizeX
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.sizeY
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.distortionValue
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.reliefValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.overlayTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: 2afc50fce21c085488d01c6cba5b6131, type: 3}
+    - target: {fileID: 114546828862365186, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.normalMap
+      value: 
+      objectReference: {fileID: 2800000, guid: 7b7918192e1f2c945a5d3e9702d07218, type: 3}
+    - target: {fileID: 114584329905853172, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.normalMap
+      value: 
+      objectReference: {fileID: 2800000, guid: 7c66e71cc2774e14a91043b23acd51c1, type: 3}
+    - target: {fileID: 114584329905853172, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.overlayTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: d4dda2720c28b0e48a8c9087bab93444, type: 3}
+    - target: {fileID: 114584329905853172, guid: 8d4d0d3eb938f7242a32a636102030b1,
+        type: 3}
+      propertyPath: variables.frictionMap
+      value: 
+      objectReference: {fileID: 2800000, guid: b78240cfb5d9b854ea43a15802177238, type: 3}
     - target: {fileID: 114697500592149106, guid: 8d4d0d3eb938f7242a32a636102030b1,
         type: 3}
       propertyPath: variables.alphaOverLifetime.m_Curve.Array.size
@@ -1341,13 +1411,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 708579404}
-  m_LocalRotation: {x: -0.024788884, y: -0, z: -0, w: 0.99969274}
-  m_LocalPosition: {x: 0, y: 0.53, z: -10}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1753196479}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -2.841, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &725244149
 GameObject:
   m_ObjectHideFlags: 0

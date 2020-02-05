@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace RainDropEffect2.Scripts.Common
@@ -34,6 +33,28 @@ namespace RainDropEffect2.Scripts.Common
         private static readonly int ReliefTexId = Shader.PropertyToID("_ReliefTex");
         private static readonly int BloomTexId = Shader.PropertyToID("_BloomTex");
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
+        
+        private static readonly Vector3[] Vertices =
+        {
+            new Vector3(1, 1, 0),
+            new Vector3(1, -1, 0),
+            new Vector3(-1, 1, 0),
+            new Vector3(-1, -1, 0),
+        };
+        
+        private static readonly Vector2[] Uvs =
+        {
+            new Vector2(1, 1),
+            new Vector2(1, 0),
+            new Vector2(0, 1),
+            new Vector2(0, 0),
+        };
+
+        private static readonly int[] Triangles =
+        {
+            0, 1, 2,
+            2, 1, 3
+        };
 
         public static string GetShaderName(RainDropShaderType shaderType)
         {
@@ -108,52 +129,24 @@ namespace RainDropEffect2.Scripts.Common
 
         public static Mesh CreateQuadMesh()
         {
-            Vector3[] vertices =
-            {
-                new Vector3(1, 1, 0),
-                new Vector3(1, -1, 0),
-                new Vector3(-1, 1, 0),
-                new Vector3(-1, -1, 0),
-            };
-
-            Vector2[] uvs =
-            {
-                new Vector2(1, 1),
-                new Vector2(1, 0),
-                new Vector2(0, 1),
-                new Vector2(0, 0),
-            };
-
-            int[] triangles =
-            {
-                0, 1, 2,
-                2, 1, 3
-            };
-
             var mesh = new Mesh
             {
                 hideFlags = HideFlags.DontSave,
                 name = "Rain Mesh",
-                vertices = vertices,
-                uv = uvs,
-                triangles = triangles
+                vertices = Vertices,
+                uv = Uvs,
+                triangles = Triangles
             };
 
+            mesh.Optimize();
             mesh.MarkDynamic();
             mesh.RecalculateBounds();
             return mesh;
         }
 
-        public static Transform CreateHiddenObject(string name, Transform parent)
+        public static Transform CreateHolder(string name, Transform parent)
         {
-            GameObject gameObject;
-#if (UNITY_EDITOR && !SHOW_HIDED)
-            gameObject = EditorUtility.CreateGameObjectWithHideFlags(name, HideFlags.HideAndDontSave);
-#else
-		    gameObject = new GameObject ();
-#endif
-            gameObject.name = name;
-            
+            var gameObject = new GameObject {name = name};
             var transform = gameObject.transform;
             transform.parent = parent;
             transform.localScale = Vector3.one;

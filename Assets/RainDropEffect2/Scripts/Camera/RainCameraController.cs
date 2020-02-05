@@ -55,17 +55,16 @@ namespace RainDropEffect2.Scripts.Camera
 
 		private void Start () 
 		{
-			if (Camera != null) return;
-			Debug.LogError ("You must add component (Camera)");
-		}
-
-		private void Update () 
-		{
-			if (Camera == null) return;
-        
-			Camera.orthographic = !vrMode;
+			if (Camera == null) 
+				Debug.LogError ("You must add component (Camera)");
+			
 			Camera.orthographicSize = 5f;
 			Camera.nearClipPlane = 0.01f;
+		}
+
+		private void Update ()
+		{
+			Camera.orthographic = !vrMode;
 			Camera.farClipPlane = distance + 0.01f;
 
 			if (transform.childCount != _rainBehaviours.Count) _rainBehaviours = null; 

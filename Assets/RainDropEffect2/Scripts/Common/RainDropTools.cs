@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace RainDropEffect2.Scripts.Common
 {
-    public class RainDropTools : MonoBehaviour
+    public static class RainDropTools
     {
         public enum RainDropShaderType
         {
@@ -169,7 +170,7 @@ namespace RainDropEffect2.Scripts.Common
         {
             foreach (Transform child in t)
             {
-                Destroy(child.gameObject);
+                Object.Destroy(child.gameObject);
             }
         }
 
@@ -177,7 +178,7 @@ namespace RainDropEffect2.Scripts.Common
         {
             foreach (Transform child in t)
             {
-                DestroyImmediate(child.gameObject);
+                Object.DestroyImmediate(child.gameObject);
             }
         }
 

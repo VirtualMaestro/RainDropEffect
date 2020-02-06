@@ -18,11 +18,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
         private FrictionFlowRainController RainController { get; set; }
 
         public override int MaxDrawCall => variables.maxRainSpawnCount;
-        public override bool IsPlaying => ReferenceEquals(RainController, null) == false && RainController.IsPlaying;
-
-        public override int CurrentDrawCall => ReferenceEquals(RainController, null)
-            ? 0
-            : RainController.drawers.FindAll(x => x.drawer.enabled).Count;
+        public override bool IsPlaying => RainController?.IsPlaying ?? false;
+        public override int CurrentDrawCall => RainController?.NumDrawCalls ?? 0;
 
         /// <summary>
         /// Gets a value indicating whether rain is shown on the screen.
@@ -31,57 +28,47 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
         public override void Refresh()
         {
-            if (ReferenceEquals(RainController, null) == false)
-            {
-                DestroyImmediate(RainController.gameObject);
-                RainController = null;
-            }
-
-            RainController = CreateController();
+            RainController?.Dispose();
+            RainController = null;
+            RainController = _CreateController();
             RainController.Refresh();
             RainController.NoMoreRain = true;
         }
 
         public override void StartRain()
         {
-            if (ReferenceEquals(RainController, null))
+            if (RainController == null)
             {
-                RainController = CreateController();
-                RainController.Refresh();
+                RainController = _CreateController();
             }
 
             RainController.NoMoreRain = false;
             RainController.Play();
         }
 
-
         public override void StopRain()
         {
-            if (ReferenceEquals(RainController, null)) return;
+            if (RainController == null) return;
 
             RainController.NoMoreRain = true;
         }
 
-
         public override void StopRainImmediate()
         {
-            if (ReferenceEquals(RainController, null)) return;
-
-            DestroyImmediate(RainController.gameObject);
+            RainController?.Dispose();
             RainController = null;
         }
 
-
         public override void ApplyFinalDepth(int finalDepth)
         {
-            if (ReferenceEquals(RainController, null)) return;
+            if (RainController == null) return;
            
             RainController.RenderQueue = finalDepth;
         }
 
         public override void ApplyGlobalWind(Vector2 globalWind)
         {
-            if (ReferenceEquals(RainController, null)) return;
+            if (RainController == null) return;
             
             RainController.GlobalWind = globalWind;
         }
@@ -96,9 +83,9 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
         public override void Update()
         {
-            InitParams();
+            _InitParams();
 
-            if (ReferenceEquals(RainController, null)) return;
+            if (RainController == null) return;
 
             RainController.ShaderType = shaderType;
             RainController.Alpha = alpha;
@@ -107,22 +94,19 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             RainController.UpdateController();
         }
 
-        private FrictionFlowRainController CreateController()
+        private FrictionFlowRainController _CreateController()
         {
-            var tr = RainDropTools.CreateHiddenObject("Controller", transform);
-            var con = tr.gameObject.AddComponent<FrictionFlowRainController>();
-            con.Variables = variables;
-            con.Alpha = 0f;
-            con.NoMoreRain = false;
-            con.Camera = GetComponentInParent<UnityEngine.Camera>();
-            return con;
+            return new FrictionFlowRainController(this, variables)
+            {
+                Alpha = 0f, NoMoreRain = false, Camera = GetComponentInParent<UnityEngine.Camera>()
+            };
         }
 
         /// <summary>
         /// (Internal) Initialize inspector params
         /// </summary>
-        [Conditional("DEBUG")]
-        private void InitParams()
+        [Conditional("UNITY_EDITOR")]
+        private void _InitParams()
         {
             if (variables == null) return;
 
@@ -154,7 +138,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
             if (RainController != null)
             {
-                foreach (var dc in RainController.drawers)
+                foreach (var dc in RainController.Drawers)
                 {
                     if (dc.IsEnable)
                         Gizmos.color = new Color(0.6f, 1f, 0.0f, 1f);

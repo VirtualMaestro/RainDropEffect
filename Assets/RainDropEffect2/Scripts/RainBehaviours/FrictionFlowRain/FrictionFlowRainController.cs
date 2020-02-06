@@ -2,60 +2,71 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using RainDropEffect2.Scripts.Common;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 {
-    public class FrictionFlowRainController : MonoBehaviour
+    public class FrictionFlowRainController : IDisposable
     {
         private const float Tolerance = 0.0001f;
 
-        public FrictionFlowRainVariables Variables { get; set; }
         public int RenderQueue { get; set; }
         public UnityEngine.Camera Camera { get; set; }
         public float Alpha { get; set; }
         public Vector2 GlobalWind { get; set; }
         public Vector3 GForceVector { get; set; }
         public bool NoMoreRain { get; set; }
-        public RainDropTools.RainDropShaderType ShaderType { get; set; }
-        public float Distance { get; set; }
-        
-        public List<FrictionFlowRainDrawerContainer> drawers = new List<FrictionFlowRainDrawerContainer>();
 
+
+        public float Distance { get; set; }
+        public int NumDrawCalls => _drawers.FindAll(x => x.drawer.enabled).Count;
+
+        private readonly FrictionFlowRainVariables _variables;
+        private List<FrictionFlowRainDrawerContainer> _drawers;
         private Transform _dummy;
         private bool _isOneShot;
         private bool _isWaitingDelay;
         private float _oneShotTimeleft;
         private float _timeElapsed;
         private float _interval;
+        private readonly FrictionFlowRainBehaviour _behaviour;
+        private RainDropTools.RainDropShaderType _shaderType;
+        private string _shaderName;
 
-        public bool IsPlaying => drawers.FindAll(t => t.currentState == DrawState.Disabled).Count != drawers.Count;
-        private Transform Dummy => _dummy == null ? _dummy = RainDropTools.CreateHolder("dummy", transform) : _dummy;
+        public RainDropTools.RainDropShaderType ShaderType
+        {
+            get => _shaderType;
+            set {
+                _shaderType = value;
+                _shaderName = RainDropTools.GetShaderName(value);
+            }
+        }
+
+        public bool IsPlaying => _drawers.FindAll(t => t.currentState == DrawState.Disabled).Count != _drawers.Count;
+        private Transform Dummy => _dummy == null ? _dummy = RainDropTools.CreateHolder("dummy", _behaviour.transform) : _dummy;
+
+        public FrictionFlowRainController(FrictionFlowRainBehaviour behaviour, FrictionFlowRainVariables variables)
+        {
+            _drawers = new List<FrictionFlowRainDrawerContainer>();
+            _behaviour = behaviour;
+            _variables = variables;
+            
+            _InitDrawers(_drawers);
+        }
 
         public void Refresh()
         {
-            foreach (var d in drawers)
-            {
-                DestroyImmediate(d.drawer.gameObject);
-            }
-
-            drawers.Clear();
-
-            for (var i = 0; i < Variables.maxRainSpawnCount; i++)
-            {
-                var container = new FrictionFlowRainDrawerContainer($"Friction Flow RainDrawer Container {i}", transform)
-                {
-                    currentState = DrawState.Disabled
-                };
-
-                drawers.Add(container);
-            }
+            _DisposeDrawers(_drawers);
+            _InitDrawers(_drawers);
         }
 
         public void Play()
         {
-            StartCoroutine(PlayDelay(Variables.delay));
+            _behaviour.StartCoroutine(PlayDelay(_variables.delay));
         }
 
         private IEnumerator PlayDelay(float delay)
@@ -71,25 +82,25 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
             _isWaitingDelay = false;
 
-            if (drawers.Exists(x => x.currentState == DrawState.Playing))
+            if (_drawers.Exists(x => x.currentState == DrawState.Playing))
             {
                 yield break;
             }
 
-            foreach (var drawerContainer in drawers)
+            foreach (var drawerContainer in _drawers)
             {
                 _InitializeDrawer(drawerContainer);
                 drawerContainer.currentState = DrawState.Disabled;
             }
 
-            _isOneShot = Variables.playOnce;
+            _isOneShot = _variables.playOnce;
 
-            if (_isOneShot) _oneShotTimeleft = Variables.duration;
+            if (_isOneShot) _oneShotTimeleft = _variables.duration;
         }
         
         public void UpdateController()
         {
-            if (Variables == null) return;
+            if (_variables == null) return;
 
             _CheckSpawnNum();
 
@@ -110,35 +121,35 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                 _CheckSpawnTime();
             }
 
-            for (var i = 0; i < drawers.Count; i++)
+            for (var i = 0; i < _drawers.Count; i++)
             {
-                _UpdateInstance(drawers[i], i);
+                _UpdateInstance(_drawers[i], i);
             }
         }
 
         private void _CheckSpawnNum()
         {
-            var diff = Variables.maxRainSpawnCount - drawers.Count;
+            var diff = _variables.maxRainSpawnCount - _drawers.Count;
 
             // MaxRainSpawnCount was increased
             if (diff > 0)
             {
                 for (var i = 0; i < diff; i++)
                 {
-                    var container = new FrictionFlowRainDrawerContainer($"Friction Flow RainDrawer {drawers.Count + i}", transform) 
+                    var container = new FrictionFlowRainDrawerContainer($"Friction Flow RainDrawer {_drawers.Count + i}", _behaviour.transform) 
                         {currentState = DrawState.Disabled};
-                    drawers.Add(container);
+                    _drawers.Add(container);
                 }
             }
 
             // MaxRainSpawnCount was decreased
             if (diff >= 0) return;
             var rmcnt = -diff;
-            var removeList = drawers.FindAll(x => x.currentState != DrawState.Playing).Take(rmcnt).ToList();
+            var removeList = _drawers.FindAll(x => x.currentState != DrawState.Playing).Take(rmcnt).ToList();
             
             if (removeList.Count < rmcnt)
             {
-                var playingDrawers = drawers.FindAll(x => x.currentState == DrawState.Playing);
+                var playingDrawers = _drawers.FindAll(x => x.currentState == DrawState.Playing);
                 var itemsToRemove = playingDrawers.Take(rmcnt - removeList.Count);
                 removeList.AddRange(itemsToRemove);
             }
@@ -146,40 +157,40 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             foreach (var rem in removeList)
             {
                 rem.drawer.Clear();
-                DestroyImmediate(rem.drawer.gameObject);
+                Object.DestroyImmediate(rem.drawer.gameObject);
             }
 
-            drawers.RemoveAll(x => x.drawer == null);
+            _drawers.RemoveAll(x => x.drawer == null);
         }
 
         private void _CheckSpawnTime()
         {
             if (_interval <= 0)
             {
-                _interval = Variables.duration /
-                            RainDropTools.Random(Variables.emissionRateMin, Variables.emissionRateMax);
+                _interval = _variables.duration /
+                            RainDropTools.Random(_variables.emissionRateMin, _variables.emissionRateMax);
             }
 
             _timeElapsed += Time.deltaTime;
             
             if (_timeElapsed < _interval) return;
 
-            var playingDrawersCount = drawers.FindAll(x => x.currentState == DrawState.Playing).Count;
-            var spawnNum = (int) Mathf.Min(_timeElapsed / _interval, Variables.maxRainSpawnCount - playingDrawersCount);
+            var playingDrawersCount = _drawers.FindAll(x => x.currentState == DrawState.Playing).Count;
+            var spawnNum = (int) Mathf.Min(_timeElapsed / _interval, _variables.maxRainSpawnCount - playingDrawersCount);
             
             for (var i = 0; i < spawnNum; i++)
             {
                 _Spawn();
             }
 
-            var rndEmission = RainDropTools.Random(Variables.emissionRateMin, Variables.emissionRateMax);
-            _interval = Variables.duration / rndEmission;
+            var rndEmission = RainDropTools.Random(_variables.emissionRateMin, _variables.emissionRateMax);
+            _interval = _variables.duration / rndEmission;
             _timeElapsed = 0f;
         }
 
         private void _Spawn()
         {
-            var spawnRain = drawers.Find(x => x.currentState == DrawState.Disabled);
+            var spawnRain = _drawers.Find(x => x.currentState == DrawState.Disabled);
             if (spawnRain == null) return;
            
             _InitializeDrawer(spawnRain);
@@ -189,27 +200,27 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
         private void _InitializeDrawer(FrictionFlowRainDrawerContainer dc)
         {
             dc.timeElapsed = 0f;
-            dc.lifetime = RainDropTools.Random(Variables.lifetimeMin, Variables.lifetimeMax);
-            dc.acceleration = RainDropTools.Random(Variables.accelerationMin, Variables.accelerationMax);
-            dc.transform.localPosition = RainDropTools.GetSpawnLocalPos(transform, Camera, 0f, Variables.spawnOffsetY);
+            dc.lifetime = RainDropTools.Random(_variables.lifetimeMin, _variables.lifetimeMax);
+            dc.acceleration = RainDropTools.Random(_variables.accelerationMin, _variables.accelerationMax);
+            dc.transform.localPosition = RainDropTools.GetSpawnLocalPos(_behaviour.transform, Camera, 0f, _variables.spawnOffsetY);
             dc.startPos = dc.transform.localPosition;
 
             if (ReferenceEquals(dc.drawer.material, null))
             {
-                var mat = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue);
+                var mat = RainDropTools.CreateRainMaterial(_shaderType, RenderQueue);
                 
                 RainDropTools.ApplyRainMaterialValue(
                     mat,
-                    ShaderType,
-                    Variables.normalMap,
-                    Variables.overlayTexture,
-                    Variables.distortionValue,
-                    Variables.overlayColor,
-                    Variables.reliefValue,
-                    Variables.blur,
-                    Variables.bloomTexture,
-                    Variables.bloom,
-                    Variables.darkness
+                    _shaderType,
+                    _variables.normalMap,
+                    _variables.overlayTexture,
+                    _variables.distortionValue,
+                    _variables.overlayColor,
+                    _variables.reliefValue,
+                    _variables.blur,
+                    _variables.bloomTexture,
+                    _variables.bloom,
+                    _variables.darkness
                 );
                 
                 dc.drawer.material = mat;
@@ -218,8 +229,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             dc.drawer.lifeTime = dc.lifetime;
             dc.drawer.vertexDistance = 0.01f;
             dc.drawer.angleDivisions = 20;
-            dc.drawer.widthCurve = Variables.trailWidth;
-            dc.drawer.widthMultiplier = RainDropTools.Random(Variables.sizeMinX, Variables.sizeMaxX);
+            dc.drawer.widthCurve = _variables.trailWidth;
+            dc.drawer.widthMultiplier = RainDropTools.Random(_variables.sizeMinX, _variables.sizeMaxX);
             dc.drawer.textureMode = LineTextureMode.Stretch;
             dc.drawer.Clear();
             dc.drawer.enabled = false;
@@ -237,7 +248,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             var clampedResolution = Mathf.Clamp(2 * widthResolution, 2, 5);
             
             Dummy.localPosition += downValue * (1f / iter) * GForceVector;
-            var j = UnityEngine.Random.Range(0, clampedResolution);
+            var j = Random.Range(0, clampedResolution);
             var ww = j * step - clampedResolution / 2f * step;
 
             return dc.drawer.transform.parent.InverseTransformPoint(Dummy.TransformPoint(ww, 0f, 0f));
@@ -252,8 +263,8 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             Dummy.localRotation = drawerTransform.localRotation;
             Dummy.localPosition = drawerTransform.localPosition;
         
-            var texW = Variables.frictionMap.width;
-            var texH = Variables.frictionMap.height;
+            var texW = _variables.frictionMap.width;
+            var texH = _variables.frictionMap.height;
             var iter = (int) Mathf.Clamp(resolution * dt, 2, 5);
         
             var widthPixels = new Dictionary<Vector3, float>();
@@ -280,7 +291,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
                     var downVector2ViewPoint = Camera.WorldToViewportPoint(downPos);
         
                     // Get the pixel grayscale
-                    var pixel = Variables.frictionMap.GetPixel(
+                    var pixel = _variables.frictionMap.GetPixel(
                         (int) (texW * downVector2ViewPoint.x),
                         (int) (texH * -downVector2ViewPoint.y)
                     ).grayscale;
@@ -355,14 +366,17 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
         {
             var progress = dc.Progress;
             var t = dc.timeElapsed;
-            var downValue = 1 / 2f * t * t * dc.acceleration * 0.1f + Variables.initialVelocity * t * 0.01f;
-            var nextPos = _GetNextPositionWithFrictionCheap(dc, downValue, 150, 8, Time.deltaTime);
+            var downValue = 1 / 2f * t * t * dc.acceleration * 0.1f + _variables.initialVelocity * t * 0.01f;
+            var nextPos = _shaderType == RainDropTools.RainDropShaderType.Cheap
+                ? _GetNextPositionWithFrictionCheap(dc, downValue, 150, 8, Time.deltaTime)
+                : _GetNextPositionWithFriction(dc, downValue, 150, 8, Time.deltaTime);
+            
             nextPos.x += progress * GlobalWind.x;
             nextPos.y += progress * GlobalWind.y;
             nextPos.z = 0;
 
             RainDropTools.CalculateCameraOrthographicSize(Camera, out var x, out var y);
-            dc.drawer.vertexDistance = (Distance * y) / (Variables.resolution * 10f);
+            dc.drawer.vertexDistance = (Distance * y) / (_variables.resolution * 10f);
             dc.transform.localPosition = nextPos;
         }
 
@@ -372,24 +386,23 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             dc.drawer.material.renderQueue = RenderQueue + index;
 
             // Update shader if needed
-            if (dc.drawer.material.shader.name != RainDropTools.GetShaderName(ShaderType))
+            if (dc.drawer.material.shader.name != _shaderName)
             {
-                dc.drawer.material = RainDropTools.CreateRainMaterial(ShaderType, RenderQueue + index);
+                dc.drawer.material = RainDropTools.CreateRainMaterial(_shaderType, RenderQueue + index);
             }
 
-            var distortionValue =
-                Variables.distortionValue * Variables.distortionOverLifetime.Evaluate(progress) * Alpha;
-            var reliefValue = Variables.reliefValue * Variables.reliefOverLifetime.Evaluate(progress) * Alpha;
-            var blurValue = Variables.blur * Variables.blurOverLifetime.Evaluate(progress) * Alpha;
-            var bloomValue = Variables.bloom * Variables.bloomOverLifetime.Evaluate(progress) * Alpha;
+            var distortionValue = _variables.distortionValue * _variables.distortionOverLifetime.Evaluate(progress) * Alpha;
+            var reliefValue = _variables.reliefValue * _variables.reliefOverLifetime.Evaluate(progress) * Alpha;
+            var blurValue = _variables.blur * _variables.blurOverLifetime.Evaluate(progress) * Alpha;
+            var bloomValue = _variables.bloom * _variables.bloomOverLifetime.Evaluate(progress) * Alpha;
             var overlayColor = new Color(
-                Variables.overlayColor.r,
-                Variables.overlayColor.g,
-                Variables.overlayColor.b,
-                Variables.overlayColor.a * Variables.alphaOverLifetime.Evaluate(progress) * Alpha
+                _variables.overlayColor.r,
+                _variables.overlayColor.g,
+                _variables.overlayColor.b,
+                _variables.overlayColor.a * _variables.alphaOverLifetime.Evaluate(progress) * Alpha
             );
 
-            switch (ShaderType)
+            switch (_shaderType)
             {
                 case RainDropTools.RainDropShaderType.Expensive:
                     if ((distortionValue + reliefValue + overlayColor.a + blurValue) / 4 < Tolerance)
@@ -421,19 +434,55 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
 
             RainDropTools.ApplyRainMaterialValue(
                 dc.drawer.material,
-                ShaderType,
-                Variables.normalMap,
-                Variables.overlayTexture,
+                _shaderType,
+                _variables.normalMap,
+                _variables.overlayTexture,
                 distortionValue,
                 overlayColor,
                 reliefValue,
                 blurValue,
-                Variables.bloomTexture,
+                _variables.bloomTexture,
                 bloomValue,
-                Variables.darkness * Alpha
+                _variables.darkness * Alpha
             );
             dc.drawer.enabled = true;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _InitDrawers(List<FrictionFlowRainDrawerContainer> drawersList)
+        {
+            for (var i = 0; i < _variables.maxRainSpawnCount; i++)
+            {
+                var container = new FrictionFlowRainDrawerContainer($"Friction Flow RainDrawer Container {i}", _behaviour.transform)
+                {
+                    currentState = DrawState.Disabled
+                };
+
+                drawersList.Add(container);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _DisposeDrawers(List<FrictionFlowRainDrawerContainer> drawersList)
+        {
+            foreach (var d in drawersList)
+            {
+                Object.DestroyImmediate(d.drawer.gameObject);
+            }
+
+            drawersList.Clear();
+        }
+
+        public void Dispose()
+        {
+            _DisposeDrawers(_drawers);
+            _drawers = null;
+            Camera = null;
+        }
+        
+#if UNITY_EDITOR
+        public List<FrictionFlowRainDrawerContainer> Drawers => _drawers;
+#endif
     }
     
     public enum DrawState

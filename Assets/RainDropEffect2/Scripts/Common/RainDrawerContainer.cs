@@ -10,7 +10,7 @@ namespace RainDropEffect2.Scripts.Common
 
 		public RainDrawerContainer (string name, Transform parent) 
 		{
-			transform = RainDropTools.CreateHiddenObject (name, parent);
+			transform = RainDropTools.CreateHolder (name, parent);
 			drawer = transform.gameObject.AddComponent <T> ();
 		}
 	}

@@ -103,7 +103,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FlowRain
 
         private FlowRainController CreateController()
         {
-            Transform tr = RainDropTools.CreateHiddenObject("Controller", transform);
+            Transform tr = RainDropTools.CreateHolder("Controller", transform);
             FlowRainController con = tr.gameObject.AddComponent<FlowRainController>();
             con.Variables = variables;
             con.Alpha = 0f;

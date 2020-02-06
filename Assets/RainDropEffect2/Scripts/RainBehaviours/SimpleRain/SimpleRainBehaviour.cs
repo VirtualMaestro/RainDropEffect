@@ -102,7 +102,7 @@ namespace RainDropEffect2.Scripts.RainBehaviours.SimpleRain
 
         private SimpleRainController CreateController()
         {
-            var tr = RainDropTools.CreateHiddenObject("Controller", transform);
+            var tr = RainDropTools.CreateHolder("Controller", transform);
             var con = tr.gameObject.AddComponent<SimpleRainController>();
             con.Variables = variables;
             con.Alpha = 0f;

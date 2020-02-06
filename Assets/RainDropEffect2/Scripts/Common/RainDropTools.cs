@@ -188,6 +188,12 @@ namespace RainDropEffect2.Scripts.Common
             return new Vector2(w, h);
         }
 
+        public static void CalculateCameraOrthographicSize(UnityEngine.Camera cam, out float w, out float h)
+        {
+            h = cam.orthographicSize * 2f;
+            w = h * cam.aspect;
+        }
+
         /// <summary>
         /// Get Spawn Position by camera and offset position
         /// </summary>

@@ -12,7 +12,6 @@ namespace RainDropEffect2.Scripts.Common
         // [SerializeField] 
         private readonly List<Path> _paths = new List<Path>();
 
-        // public new bool enabled = true;
         public Material material;
         public float lifeTime = 3f;
         public AnimationCurve widthCurve;
@@ -227,7 +226,7 @@ namespace RainDropEffect2.Scripts.Common
 
         public static void DisposePool()
         {
-            _pool.Dispose();
+            _pool?.Dispose();
             _pool = null;
         }
 

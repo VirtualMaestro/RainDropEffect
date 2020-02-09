@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace RainDropEffect2.Scripts.Common
 {
-    public class DropTrail : MonoBehaviour
+    public sealed class DropTrail : MonoBehaviour
     {
         private const string Name = "DropTrailMesh";
 
         // [SerializeField] 
-        private List<Path> _paths = new List<Path>();
+        private readonly List<Path> _paths = new List<Path>();
 
         // public new bool enabled = true;
         public Material material;
@@ -63,39 +64,48 @@ namespace RainDropEffect2.Scripts.Common
         private void _UpdateTrail()
         {
             // Remove all expires
-            _paths.RemoveAll(t => t.TimeElapsed >= lifeTime);
+            _paths.RemoveAll(p =>
+            {
+                if (Time.time - p.TimeCreated >= lifeTime)
+                {
+                    p.Dispose();
+                    return true;
+                }
+            
+                return false;
+            });
 
-            var localPosition = transform.localPosition;
-            var localRotation = transform.localRotation;
-
+            var trans = transform;
+            var localPosition = trans.localPosition;
+            var localRotation = trans.localRotation;
+            
             switch (_paths.Count)
             {
                 case 0:
-                    _paths.Add(new Path(localPosition, localRotation));
-                    // paths.Add(new Path(localPosition, localRotation));
-
+                    _paths.Add(Path.Create(ref localPosition, ref localRotation));
                     _relativePos = localPosition;
                     break;
                 case 1:
-                    _paths.Add(new Path(localPosition, localRotation));
+                    _paths.Add(Path.Create(ref localPosition, ref localRotation));
                     _relativePos = localPosition;
                     break;
             }
 
             // Add if needed
-            var distSqr = (_paths[0].localPosition - localPosition).sqrMagnitude;
+            var path0LocalPosition = _paths[0].LocalPosition;
+            var distSqr = (path0LocalPosition - localPosition).sqrMagnitude;
             if (distSqr < vertexDistance) return;
 
-            var vec1 = _paths[0].localPosition - _paths[1].localPosition;
-            var vec2 = transform.localPosition - _paths[0].localPosition;
+            var vec1 = path0LocalPosition - _paths[1].LocalPosition;
+            var vec2 = trans.localPosition - path0LocalPosition;
 
             Quaternion qv1 = Quaternion.identity;
             Quaternion qv2 = Quaternion.identity;
 
-            if (Math.Abs(vec1.magnitude) > 0.0001)
+            if (Math.Abs(vec1.sqrMagnitude) > 0.0001)
                 qv1 = Quaternion.LookRotation(vec1, Vector3.forward);
 
-            if (Math.Abs(vec2.magnitude) > 0.0001)
+            if (Math.Abs(vec2.sqrMagnitude) > 0.0001)
                 qv2 = Quaternion.LookRotation(vec2, Vector3.forward);
 
             qv1.eulerAngles += Vector3.forward * -90f;
@@ -114,13 +124,16 @@ namespace RainDropEffect2.Scripts.Common
                     for (var j = 0; j < angleResol; j++)
                     {
                         var q = Quaternion.Slerp(qv1, qv2, j / (float) angleResol);
-                        _paths.Insert(0, new Path(_paths[0].localPosition, q));
+                        
+                        _paths.Insert(0, Path.Create(ref _paths[0].LocalPosition, ref q));
                     }
                 }
             }
 
             _relativePos = vec2;
-            _paths.Insert(0, new Path(transform.localPosition, qv2));
+           
+            var transformLocalPosition = transform.localPosition;
+            _paths.Insert(0, Path.Create(ref transformLocalPosition, ref qv2));
         }
 
         private void _UpdateMesh()
@@ -144,8 +157,8 @@ namespace RainDropEffect2.Scripts.Common
                 var progress = i / (float) _paths.Count;
                 var p = _paths[i];
                 
-                _trail.transform.localPosition = p.localPosition;
-                _trail.transform.localRotation = p.localRotation;
+                _trail.transform.localPosition = p.LocalPosition;
+                _trail.transform.localRotation = p.LocalRotation;
 
                 var w = Mathf.Max(widthMultiplier * widthCurve.Evaluate(progress) * 0.5f, 0.001f);
                 verts[i * 2] = _trail.transform.TransformPoint(0, w, 0);
@@ -197,19 +210,47 @@ namespace RainDropEffect2.Scripts.Common
         }
     }
 
-    [Serializable]
-    internal class Path
+    // [Serializable]
+    public sealed class Path
     {
-        public float timeCreated;
-        public float TimeElapsed => Time.time - timeCreated;
-        public Vector3 localPosition;
-        public Quaternion localRotation;
+        private static StackPool<Path> _pool;
 
-        public Path(Vector3 localPosition, Quaternion localRotation)
+        public static Path Create(ref Vector3 position, ref Quaternion rotation)
         {
-            this.localPosition = localPosition;
-            this.localRotation = localRotation;
-            timeCreated = Time.time;
+            if (_pool == null)
+                _pool = new StackPool<Path>(50, () => new Path());
+            
+            var path = _pool.Get();
+            path.SetTo(ref position, ref rotation);
+            return path;
+        }
+
+        public static void DisposePool()
+        {
+            _pool.Dispose();
+            _pool = null;
+        }
+
+        public static string StatPool => _pool.ToString();
+        
+        public float TimeCreated;
+        public Vector3 LocalPosition;
+        public Quaternion LocalRotation;
+
+        private Path()
+        { }
+
+        public void Dispose()
+        {
+            _pool.Put(this);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetTo(ref Vector3 position, ref Quaternion rotation)
+        {
+            LocalPosition = position;
+            LocalRotation = rotation;
+            TimeCreated = Time.time;
         }
     }
 }

@@ -94,6 +94,11 @@ namespace RainDropEffect2.Scripts.RainBehaviours.FrictionFlowRain
             RainController.UpdateController();
         }
 
+        private void OnDestroy()
+        {
+            Path.DisposePool();
+        }
+
         private FrictionFlowRainController _CreateController()
         {
             return new FrictionFlowRainController(this, variables)

@@ -1,0 +1,29 @@
+{
+  "rows": [
+    {"section": "Rendering", "case": "Camera alpha preserved", "method": "CameraAlphaIsPreserved", "result": "PASS", "evidence": "ARGB32 target cleared to alpha 0 reads back alpha 0"},
+    {"section": "URP configuration", "case": "Dynamic resolution", "method": "DynamicResolutionRenders", "result": "PASS", "evidence": "ScalableBufferManager.ResizeBuffers(0.7, 0.7)"},
+    {"section": "Rendering", "case": "Edge drop clamps, does not wrap", "method": "EdgeDropIsClampedNotWrapped", "result": "PASS", "evidence": "right edge stays blue-dominant: r129 < b255 against a red left half"},
+    {"section": "URP configuration", "case": "HDR on and off", "method": "HdrOnAndOffBothRender", "result": "PASS", "evidence": "supportsHDR false and true"},
+    {"section": "URP configuration", "case": "MSAA off / 2x / 4x", "method": "MsaaLevelsAllRender", "result": "PASS", "evidence": "msaaSampleCount 1, 2 and 4"},
+    {"section": "Rendering", "case": "Opaque + transparent content refracted", "method": "OpaqueAndTransparentContentIsRefracted", "result": "PASS", "evidence": "centre pixel changes over a scene holding an opaque cube and a transparent quad"},
+    {"section": "Rendering", "case": "Overlapping drops do not erase earlier drops", "method": "OverlappingDropsDoNotEraseEachOther", "result": "PASS", "evidence": "single delta 115, overlapped delta 115"},
+    {"section": "URP configuration", "case": "Perspective and orthographic", "method": "PerspectiveAndOrthographicBothRender", "result": "PASS", "evidence": "both projections render the drop"},
+    {"section": "Rendering", "case": "Portrait and landscape", "method": "PortraitAndLandscapeBothRender", "result": "PASS", "evidence": "180x320 and 320x180 render targets"},
+    {"section": "URP configuration", "case": "Post-processing on and off", "method": "PostProcessingOnAndOffBothRender", "result": "PASS", "evidence": "renderPostProcessing false and true"},
+    {"section": "Camera policy", "case": "Preview and reflection cameras show no rain", "method": "PreviewAndReflectionCamerasShowNoRain", "result": "PASS", "evidence": "the rendered centre differs from the Game camera's for CameraType.Preview and Reflection"},
+    {"section": "URP configuration", "case": "Render scale 0.5 and 1.0", "method": "RenderScaleHalfAndFullBothRender", "result": "PASS", "evidence": "renderScale 0.5 and 1.0"},
+    {"section": "Rendering", "case": "Camera rendering to a RenderTexture", "method": "RenderTextureOutputCameraRenders", "result": "PASS", "evidence": "256x256 RenderTexture target"},
+    {"section": "Camera policy", "case": "Simulation ticks once per frame with three cameras", "method": "SimulationTicksOncePerFrameWithThreeCameras", "result": "PASS", "evidence": "2 layers / 1 batches with one camera and with three"},
+    {"section": "Camera policy", "case": "Two independent cameras render side by side", "method": "TwoCamerasRenderIndependently", "result": "PASS", "evidence": "two cameras, two RenderTextures, one profile"},
+    {"section": "Rendering", "case": "Two effects on one camera blend", "method": "TwoEffectsOnOneCameraBlend", "result": "PASS", "evidence": "both components draw in component order"},
+    {"section": "State", "case": "Delay 2 s then Clear at 1 s never spawns", "method": "ClearDuringDelayNeverSpawns", "result": "PASS", "evidence": "0 batches after 3 further seconds"},
+    {"section": "Ownership", "case": "Disable and destroy release the camera registry", "method": "DisableAndDestroyReleaseTheRegistry", "result": "PASS", "evidence": "registry count 1 -> 0 -> 1 -> 0"},
+    {"section": "Ownership", "case": "100 play/stop/clear cycles do not grow", "method": "HundredPlayStopClearCyclesDoNotGrow", "result": "PASS", "evidence": "meshes 29 -> 29, allocated delta -128 B"},
+    {"section": "State", "case": "Long frame clamped to 0.1 s", "method": "LongFrameIsClampedToOneTenthOfASecond", "result": "PASS", "evidence": "a 3 s delta advances the state exactly as a 0.1 s delta does"},
+    {"section": "Ownership", "case": "20 rebuilds across all quality tiers do not grow resources", "method": "RepeatedRebuildDoesNotGrowResources", "result": "PASS", "evidence": "meshes 29 -> 6, materials 67 -> 44"},
+    {"section": "Ownership", "case": "Five target resizes create no resources", "method": "ResizingTheTargetDoesNotGrowResources", "result": "PASS", "evidence": "meshes stayed at 6"},
+    {"section": "State", "case": "Play() during the delay is ignored", "method": "RestartDuringDelayIsIgnored", "result": "PASS", "evidence": "nothing at 1 s, batches present after 2 s"},
+    {"section": "State", "case": "timeScale 0 freezes, non-zero advances", "method": "TimeScaleZeroFreezesTheSimulation", "result": "PASS", "evidence": "identical sample across 30 zero-length ticks"},
+    {"section": "State", "case": "Intensity 0 produces no passes", "method": "ZeroIntensityProducesNoBatches", "result": "PASS", "evidence": "batch count drops to 0"}
+  ]
+}

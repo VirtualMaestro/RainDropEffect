@@ -1,0 +1,11 @@
+OVERLAY|Overlay pass only (no scene copy)|PASS|mean RGB difference 0.82/255
+M1|MSAA off, HDR off, scale 1|PASS|mean RGB difference vs no-rain frame 5.04/255
+M2|MSAA 4x|PASS|mean RGB difference vs no-rain frame 5.03/255
+M3|HDR on|PASS|mean RGB difference vs no-rain frame 5.01/255
+M4|Render scale 0.5|PASS|mean RGB difference vs no-rain frame 4.98/255
+M5|Post-processing off, Intermediate Texture = Auto|PASS|mean RGB difference vs no-rain frame 5.04/255
+M6|Camera targetTexture 1280x720|PASS|mean RGB difference vs no-rain frame 5.04/255
+M7|Base + overlay stack, rain on base camera|FAIL|mean RGB difference vs no-rain frame 0.00/255
+M9|Orthographic camera|PASS|mean RGB difference vs no-rain frame 4.69/255
+M10|Screen Space Overlay UI|PASS|mean RGB difference vs no-rain frame 5.03/255
+M8|Scene View preview|MANUAL|Scene View cannot be captured from Play Mode; checked by hand.

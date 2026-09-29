@@ -1,0 +1,23 @@
+{
+  "platform": "WindowsPlayer",
+  "unity": "6000.3.23f1",
+  "graphicsDevice": "NVIDIA GeForce RTX 4080 Laptop GPU",
+  "graphicsApi": "Direct3D11",
+  "graphicsVersion": "Direct3D 11.0 [level 11.1]",
+  "processor": "Intel(R) Core(TM) i9-14900HX",
+  "os": "Windows 11  (10.0.26200)",
+  "resolution": "1280x720",
+  "targetFrameRate": -1, "vSyncCount": 0,
+  "scenarios": [
+    {"scenario": "none", "quality": "Balanced", "frames": 600, "frameTimeP50": 0.337, "frameTimeP95": 0.442, "cpuFrameTimeP50": 0.335, "cpuFrameTimeP95": 0.444, "gpuFrameTimeP50": 0.057, "gpuFrameTimeP95": 0.060, "gcDelta": 0, "allocatedDeltaBytes": 1072},
+    {"scenario": "Bench_Sparse", "quality": "Low", "frames": 600, "frameTimeP50": 0.375, "frameTimeP95": 0.469, "cpuFrameTimeP50": 0.375, "cpuFrameTimeP95": 0.464, "gpuFrameTimeP50": 0.083, "gpuFrameTimeP95": 0.089, "gcDelta": 0, "allocatedDeltaBytes": -3336},
+    {"scenario": "Bench_Sparse", "quality": "Balanced", "frames": 600, "frameTimeP50": 0.371, "frameTimeP95": 0.486, "cpuFrameTimeP50": 0.372, "cpuFrameTimeP95": 0.485, "gpuFrameTimeP50": 0.083, "gpuFrameTimeP95": 0.091, "gcDelta": 0, "allocatedDeltaBytes": 5824},
+    {"scenario": "Bench_Sparse", "quality": "High", "frames": 600, "frameTimeP50": 0.384, "frameTimeP95": 0.541, "cpuFrameTimeP50": 0.383, "cpuFrameTimeP95": 0.533, "gpuFrameTimeP50": 0.084, "gpuFrameTimeP95": 0.096, "gcDelta": 0, "allocatedDeltaBytes": 928},
+    {"scenario": "Bench_Trails", "quality": "Low", "frames": 600, "frameTimeP50": 0.395, "frameTimeP95": 0.543, "cpuFrameTimeP50": 0.395, "cpuFrameTimeP95": 0.540, "gpuFrameTimeP50": 0.074, "gpuFrameTimeP95": 0.088, "gcDelta": 0, "allocatedDeltaBytes": 6238},
+    {"scenario": "Bench_Trails", "quality": "Balanced", "frames": 600, "frameTimeP50": 0.390, "frameTimeP95": 0.596, "cpuFrameTimeP50": 0.390, "cpuFrameTimeP95": 0.587, "gpuFrameTimeP50": 0.093, "gpuFrameTimeP95": 0.112, "gcDelta": 0, "allocatedDeltaBytes": 164002},
+    {"scenario": "Bench_Trails", "quality": "High", "frames": 600, "frameTimeP50": 0.370, "frameTimeP95": 0.500, "cpuFrameTimeP50": 0.368, "cpuFrameTimeP95": 0.506, "gpuFrameTimeP50": 0.095, "gpuFrameTimeP95": 0.113, "gcDelta": 0, "allocatedDeltaBytes": 7538},
+    {"scenario": "Bench_Combined", "quality": "Low", "frames": 600, "frameTimeP50": 0.419, "frameTimeP95": 0.555, "cpuFrameTimeP50": 0.419, "cpuFrameTimeP95": 0.557, "gpuFrameTimeP50": 0.114, "gpuFrameTimeP95": 0.125, "gcDelta": 0, "allocatedDeltaBytes": -2488},
+    {"scenario": "Bench_Combined", "quality": "Balanced", "frames": 600, "frameTimeP50": 0.419, "frameTimeP95": 0.576, "cpuFrameTimeP50": 0.418, "cpuFrameTimeP95": 0.579, "gpuFrameTimeP50": 0.117, "gpuFrameTimeP95": 0.127, "gcDelta": 0, "allocatedDeltaBytes": 5548},
+    {"scenario": "Bench_Combined", "quality": "High", "frames": 600, "frameTimeP50": 0.428, "frameTimeP95": 0.589, "cpuFrameTimeP50": 0.428, "cpuFrameTimeP95": 0.588, "gpuFrameTimeP50": 0.119, "gpuFrameTimeP95": 0.130, "gcDelta": 0, "allocatedDeltaBytes": -940}
+  ]
+}

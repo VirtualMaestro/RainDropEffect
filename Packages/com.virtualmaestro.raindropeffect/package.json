@@ -1,0 +1,32 @@
+{
+  "name": "com.virtualmaestro.raindropeffect",
+  "displayName": "Rain Drop Effect URP",
+  "version": "2.0.2",
+  "unity": "6000.3",
+  "description": "Camera-space rain, frozen, blood and splash lens effects for Unity 6.3+ URP (Render Graph).",
+  "keywords": [
+    "rain",
+    "urp",
+    "camera effect",
+    "post effect"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "VirtualMaestro"
+  },
+  "dependencies": {
+    "com.unity.render-pipelines.universal": "17.3.0"
+  },
+  "samples": [
+    {
+      "displayName": "Basic Setup",
+      "description": "One camera with a rain profile.",
+      "path": "Samples~/Basic"
+    },
+    {
+      "displayName": "Effects Gallery",
+      "description": "All presets on one camera, plus a camera prefab per preset.",
+      "path": "Samples~/EffectsGallery"
+    }
+  ]
+}

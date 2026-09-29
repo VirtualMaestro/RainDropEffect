@@ -1,0 +1,10 @@
+{
+  "variants": [
+    { "shader": "Hidden/RainDropEffect/Blur", "pass": "RAIN_BLUR_H", "stage": "Vertex", "variantCount": 1 },
+    { "shader": "Hidden/RainDropEffect/Blur", "pass": "RAIN_BLUR_H", "stage": "Fragment", "variantCount": 1 },
+    { "shader": "Hidden/RainDropEffect/Lens", "pass": "LENS", "stage": "Vertex", "variantCount": 1 },
+    { "shader": "Hidden/RainDropEffect/Lens", "pass": "LENS", "stage": "Fragment", "variantCount": 2 },
+    { "shader": "Hidden/RainDropEffect/Lens", "pass": "OVERLAY", "stage": "Vertex", "variantCount": 1 },
+    { "shader": "Hidden/RainDropEffect/Lens", "pass": "OVERLAY", "stage": "Fragment", "variantCount": 1 }
+  ]
+}

@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a22c287852e50a418ba071574258e01, type: 3}
+  m_Name: Frozen
+  m_EditorClassIdentifier: RainDropEffect.Runtime::RainDropEffect.RainProfile
+  Version: 1
+  StaticLayers:
+  - Name: Static Frozen Frame (FullScreen)
+    Enabled: 1
+    Depth: 2
+    Mode: 0
+    NormalMap: {fileID: 2800000, guid: 6ad3cdd20666ff74d8f5116b00173f35, type: 3}
+    OverlayTexture: {fileID: 2800000, guid: 3824f004bac15f046b0ad166bf26d59d, type: 3}
+    CoverageMask: {fileID: 2800000, guid: db793bc8b9428074da6ce831bcbf5526, type: 3}
+    OverlayColor: {r: 0.7352941, g: 0.9233266, b: 1, a: 0.697}
+    Distortion: 43.6
+    Relief: 0
+    Blur: 0.6444444
+    Darkness: 0
+    AutoStart: 0
+    FullScreen: 1
+    Size: {x: 0.9056748, y: 1.0204492}
+    Offset: {x: 0, y: 0}
+    FadeTime: 0.82
+    FadeCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - Name: Static Frozen Fill (FullScreen)
+    Enabled: 1
+    Depth: 1
+    Mode: 0
+    NormalMap: {fileID: 2800000, guid: 6de9a03e47562f74c8412ff380beebad, type: 3}
+    OverlayTexture: {fileID: 2800000, guid: 10feca35f0493ce4e80de83132590881, type: 3}
+    CoverageMask: {fileID: 2800000, guid: fde877d6f1e30814b83802850ca27db6, type: 3}
+    OverlayColor: {r: 0.9044118, g: 0.9723124, b: 1, a: 0.084}
+    Distortion: 8.5
+    Relief: 0
+    Blur: 0.37777779
+    Darkness: 0
+    AutoStart: 0
+    FullScreen: 1
+    Size: {x: 0.9056748, y: 1.0204492}
+    Offset: {x: 0, y: 0}
+    FadeTime: 0.82
+    FadeCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  SimpleLayers: []
+  FlowLayers: []
+  FrictionLayers: []

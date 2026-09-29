@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="49" result="Passed" total="49" passed="49" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:21Z" duration="1.1558642">
+  <test-suite type="TestSuite" id="1065" name="RainDropEffect2" fullname="RainDropEffect2" runstate="Runnable" testcasecount="49" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:21Z" duration="1.155864" total="49" passed="49" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1060" name="RainDropEffect.Tests.Runtime.dll" fullname="C:/workspace/projects/unity/RainDropEffect/Library/ScriptAssemblies/RainDropEffect.Tests.Runtime.dll" runstate="Runnable" testcasecount="49" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:21Z" duration="1.150020" total="49" passed="49" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="68504" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1061" name="RainDropEffect" fullname="RainDropEffect" runstate="Runnable" testcasecount="49" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:21Z" duration="1.149630" total="49" passed="49" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1062" name="Tests" fullname="RainDropEffect.Tests" runstate="Runnable" testcasecount="49" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:21Z" duration="1.149328" total="49" passed="49" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="DenseTrailBenchmarkTests" fullname="RainDropEffect.Tests.DenseTrailBenchmarkTests" classname="RainDropEffect.Tests.DenseTrailBenchmarkTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.200071" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1002" name="DenseProfileTickStaysUnderSanityBound" fullname="RainDropEffect.Tests.DenseTrailBenchmarkTests.DenseProfileTickStaysUnderSanityBound" methodname="DenseProfileTickStaysUnderSanityBound" classname="RainDropEffect.Tests.DenseTrailBenchmarkTests" runstate="Runnable" seed="1573086909" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.191069" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainBenchmarkCamera' has no profile
+[RainDropEffect] friction layer 'Friction' has no FrictionField; trails fall straight
+dense tick+emit: mean 0.45 ms, p95 0.628 ms over 300 samples
+written to Logs/benchmark-cpu.json
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1003" name="RainBlurPassTests" fullname="RainDropEffect.Tests.RainBlurPassTests" classname="RainDropEffect.Tests.RainBlurPassTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.327382" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1004" name="BlurChangesTheImageOnlyWhenRequestedAndAllowed" fullname="RainDropEffect.Tests.RainBlurPassTests.BlurChangesTheImageOnlyWhenRequestedAndAllowed" methodname="BlurChangesTheImageOnlyWhenRequestedAndAllowed" classname="RainDropEffect.Tests.RainBlurPassTests" runstate="Runnable" seed="2114725134" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.272425" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainBlurTestCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1005" name="LowQualityDisablesBlurEntirely" fullname="RainDropEffect.Tests.RainBlurPassTests.LowQualityDisablesBlurEntirely" methodname="LowQualityDisablesBlurEntirely" classname="RainDropEffect.Tests.RainBlurPassTests" runstate="Runnable" seed="1692279669" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.048161" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainBlurTestCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1006" name="ZeroBlurMatchesNoBlurRequest" fullname="RainDropEffect.Tests.RainBlurPassTests.ZeroBlurMatchesNoBlurRequest" methodname="ZeroBlurMatchesNoBlurRequest" classname="RainDropEffect.Tests.RainBlurPassTests" runstate="Runnable" seed="1936582062" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.005708" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainBlurTestCamera' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1007" name="RainEffectAllocationTests" fullname="RainDropEffect.Tests.RainEffectAllocationTests" classname="RainDropEffect.Tests.RainEffectAllocationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.012276" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1009" name="EmitDoesNotAllocateWithBasicProfile" fullname="RainDropEffect.Tests.RainEffectAllocationTests.EmitDoesNotAllocateWithBasicProfile" methodname="EmitDoesNotAllocateWithBasicProfile" classname="RainDropEffect.Tests.RainEffectAllocationTests" runstate="Runnable" seed="2003346790" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.004308" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainAllocationCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1011" name="EmitDoesNotAllocateWithMaximumDrops" fullname="RainDropEffect.Tests.RainEffectAllocationTests.EmitDoesNotAllocateWithMaximumDrops" methodname="EmitDoesNotAllocateWithMaximumDrops" classname="RainDropEffect.Tests.RainEffectAllocationTests" runstate="Runnable" seed="1903637886" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002449" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainAllocationCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1008" name="TickDoesNotAllocateWithBasicProfile" fullname="RainDropEffect.Tests.RainEffectAllocationTests.TickDoesNotAllocateWithBasicProfile" methodname="TickDoesNotAllocateWithBasicProfile" classname="RainDropEffect.Tests.RainEffectAllocationTests" runstate="Runnable" seed="400209748" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002211" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainAllocationCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1010" name="TickDoesNotAllocateWithMaximumDrops" fullname="RainDropEffect.Tests.RainEffectAllocationTests.TickDoesNotAllocateWithMaximumDrops" methodname="TickDoesNotAllocateWithMaximumDrops" classname="RainDropEffect.Tests.RainEffectAllocationTests" runstate="Runnable" seed="435565121" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002376" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainAllocationCamera' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1012" name="RainEffectLifecycleTests" fullname="RainDropEffect.Tests.RainEffectLifecycleTests" classname="RainDropEffect.Tests.RainEffectLifecycleTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.015518" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1016" name="AutoStartPlaysOnEnableInPlayMode" fullname="RainDropEffect.Tests.RainEffectLifecycleTests.AutoStartPlaysOnEnableInPlayMode" methodname="AutoStartPlaysOnEnableInPlayMode" classname="RainDropEffect.Tests.RainEffectLifecycleTests" runstate="Runnable" seed="1138611479" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002048" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainLifecycleCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1015" name="DisableReleasesResources" fullname="RainDropEffect.Tests.RainEffectLifecycleTests.DisableReleasesResources" methodname="DisableReleasesResources" classname="RainDropEffect.Tests.RainEffectLifecycleTests" runstate="Runnable" seed="2071439408" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.004131" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainLifecycleCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1013" name="PlayStopClearCyclesDoNotLeak" fullname="RainDropEffect.Tests.RainEffectLifecycleTests.PlayStopClearCyclesDoNotLeak" methodname="PlayStopClearCyclesDoNotLeak" classname="RainDropEffect.Tests.RainEffectLifecycleTests" runstate="Runnable" seed="170175569" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002336" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainLifecycleCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1014" name="RebuildReplacesResourcesWithoutGrowth" fullname="RainDropEffect.Tests.RainEffectLifecycleTests.RebuildReplacesResourcesWithoutGrowth" methodname="RebuildReplacesResourcesWithoutGrowth" classname="RainDropEffect.Tests.RainEffectLifecycleTests" runstate="Runnable" seed="1998565226" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.004182" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainLifecycleCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1017" name="StopLetsDropsFinishAndClearDoesNot" fullname="RainDropEffect.Tests.RainEffectLifecycleTests.StopLetsDropsFinishAndClearDoesNot" methodname="StopLetsDropsFinishAndClearDoesNot" classname="RainDropEffect.Tests.RainEffectLifecycleTests" runstate="Runnable" seed="1036258570" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.001814" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainLifecycleCamera' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1018" name="RainRegistryTests" fullname="RainDropEffect.Tests.RainRegistryTests" classname="RainDropEffect.Tests.RainRegistryTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.005027" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1020" name="DisabledEffectIsUnregistered" fullname="RainDropEffect.Tests.RainRegistryTests.DisabledEffectIsUnregistered" methodname="DisabledEffectIsUnregistered" classname="RainDropEffect.Tests.RainRegistryTests" runstate="Runnable" seed="641064509" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002401" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainCam' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1019" name="EnabledEffectIsRegisteredForItsCamera" fullname="RainDropEffect.Tests.RainRegistryTests.EnabledEffectIsRegisteredForItsCamera" methodname="EnabledEffectIsRegisteredForItsCamera" classname="RainDropEffect.Tests.RainRegistryTests" runstate="Runnable" seed="1872284089" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.000657" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainCam' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1021" name="MultipleEffectsKeepComponentOrder" fullname="RainDropEffect.Tests.RainRegistryTests.MultipleEffectsKeepComponentOrder" methodname="MultipleEffectsKeepComponentOrder" classname="RainDropEffect.Tests.RainRegistryTests" runstate="Runnable" seed="121064680" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.001102" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainCam' has no profile
+[RainDropEffect] RainEffect on 'RainCam' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1022" name="RainRenderPassTests" fullname="RainDropEffect.Tests.RainRenderPassTests" classname="RainDropEffect.Tests.RainRenderPassTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.031586" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1025" name="InactiveEffectEnqueuesNoPass" fullname="RainDropEffect.Tests.RainRenderPassTests.InactiveEffectEnqueuesNoPass" methodname="InactiveEffectEnqueuesNoPass" classname="RainDropEffect.Tests.RainRenderPassTests" runstate="Runnable" seed="345048723" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.006657" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainTestCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1023" name="LensBatchChangesTheCentreAndLeavesTheCornerAlone" fullname="RainDropEffect.Tests.RainRenderPassTests.LensBatchChangesTheCentreAndLeavesTheCornerAlone" methodname="LensBatchChangesTheCentreAndLeavesTheCornerAlone" classname="RainDropEffect.Tests.RainRenderPassTests" runstate="Runnable" seed="928641805" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.005811" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainTestCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1024" name="LensBatchRendersThroughACameraStack" fullname="RainDropEffect.Tests.RainRenderPassTests.LensBatchRendersThroughACameraStack" methodname="LensBatchRendersThroughACameraStack" classname="RainDropEffect.Tests.RainRenderPassTests" runstate="Runnable" seed="1687759345" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.018074" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainTestCamera' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1026" name="ReleaseRenderingTests" fullname="RainDropEffect.Tests.ReleaseRenderingTests" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.170380" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1033" name="CameraAlphaIsPreserved" fullname="RainDropEffect.Tests.ReleaseRenderingTests.CameraAlphaIsPreserved" methodname="CameraAlphaIsPreserved" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="405113110" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.007060" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1038" name="DynamicResolutionRenders" fullname="RainDropEffect.Tests.ReleaseRenderingTests.DynamicResolutionRenders" methodname="DynamicResolutionRenders" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="2097194604" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.013310" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1031" name="EdgeDropIsClampedNotWrapped" fullname="RainDropEffect.Tests.ReleaseRenderingTests.EdgeDropIsClampedNotWrapped" methodname="EdgeDropIsClampedNotWrapped" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="1218456003" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.005943" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1035" name="HdrOnAndOffBothRender" fullname="RainDropEffect.Tests.ReleaseRenderingTests.HdrOnAndOffBothRender" methodname="HdrOnAndOffBothRender" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="2081465825" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.013212" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1036" name="MsaaLevelsAllRender" fullname="RainDropEffect.Tests.ReleaseRenderingTests.MsaaLevelsAllRender" methodname="MsaaLevelsAllRender" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="1386939589" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.016419" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1027" name="OpaqueAndTransparentContentIsRefracted" fullname="RainDropEffect.Tests.ReleaseRenderingTests.OpaqueAndTransparentContentIsRefracted" methodname="OpaqueAndTransparentContentIsRefracted" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="1143272763" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.006383" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1028" name="OverlappingDropsDoNotEraseEachOther" fullname="RainDropEffect.Tests.ReleaseRenderingTests.OverlappingDropsDoNotEraseEachOther" methodname="OverlappingDropsDoNotEraseEachOther" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="801112895" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.008577" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1034" name="PerspectiveAndOrthographicBothRender" fullname="RainDropEffect.Tests.ReleaseRenderingTests.PerspectiveAndOrthographicBothRender" methodname="PerspectiveAndOrthographicBothRender" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="237824065" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.009698" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1030" name="PortraitAndLandscapeBothRender" fullname="RainDropEffect.Tests.ReleaseRenderingTests.PortraitAndLandscapeBothRender" methodname="PortraitAndLandscapeBothRender" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="1226314642" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.014209" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1039" name="PostProcessingOnAndOffBothRender" fullname="RainDropEffect.Tests.ReleaseRenderingTests.PostProcessingOnAndOffBothRender" methodname="PostProcessingOnAndOffBothRender" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="268622879" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.010279" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1041" name="PreviewAndReflectionCamerasShowNoRain" fullname="RainDropEffect.Tests.ReleaseRenderingTests.PreviewAndReflectionCamerasShowNoRain" methodname="PreviewAndReflectionCamerasShowNoRain" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="381794876" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.010536" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1037" name="RenderScaleHalfAndFullBothRender" fullname="RainDropEffect.Tests.ReleaseRenderingTests.RenderScaleHalfAndFullBothRender" methodname="RenderScaleHalfAndFullBothRender" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="235800704" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.010845" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1032" name="RenderTextureOutputCameraRenders" fullname="RainDropEffect.Tests.ReleaseRenderingTests.RenderTextureOutputCameraRenders" methodname="RenderTextureOutputCameraRenders" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="1224872000" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.006758" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1042" name="SimulationTicksOncePerFrameWithThreeCameras" fullname="RainDropEffect.Tests.ReleaseRenderingTests.SimulationTicksOncePerFrameWithThreeCameras" methodname="SimulationTicksOncePerFrameWithThreeCameras" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="1832745387" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.014295" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'TickOne' has no profile
+[RainDropEffect] RainEffect on 'TickMany0' has no profile
+[RainDropEffect] RainEffect on 'TickMany1' has no profile
+[RainDropEffect] RainEffect on 'TickMany2' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1040" name="TwoCamerasRenderIndependently" fullname="RainDropEffect.Tests.ReleaseRenderingTests.TwoCamerasRenderIndependently" methodname="TwoCamerasRenderIndependently" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="77997662" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.013550" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCameraB' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1029" name="TwoEffectsOnOneCameraBlend" fullname="RainDropEffect.Tests.ReleaseRenderingTests.TwoEffectsOnOneCameraBlend" methodname="TwoEffectsOnOneCameraBlend" classname="RainDropEffect.Tests.ReleaseRenderingTests" runstate="Runnable" seed="187226477" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.006880" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+[RainDropEffect] RainEffect on 'ReleaseCamera' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1043" name="ReleaseStateTests" fullname="RainDropEffect.Tests.ReleaseStateTests" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:21Z" duration="0.357171" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1044" name="ClearDuringDelayNeverSpawns" fullname="RainDropEffect.Tests.ReleaseStateTests.ClearDuringDelayNeverSpawns" methodname="ClearDuringDelayNeverSpawns" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="1332721032" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002555" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1051" name="DisableAndDestroyReleaseTheRegistry" fullname="RainDropEffect.Tests.ReleaseStateTests.DisableAndDestroyReleaseTheRegistry" methodname="DisableAndDestroyReleaseTheRegistry" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="1639909830" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:20Z" duration="0.002511" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1049" name="HundredPlayStopClearCyclesDoNotGrow" fullname="RainDropEffect.Tests.ReleaseStateTests.HundredPlayStopClearCyclesDoNotGrow" methodname="HundredPlayStopClearCyclesDoNotGrow" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="169908414" result="Passed" start-time="2026-09-10 11:06:20Z" end-time="2026-09-10 11:06:21Z" duration="0.275272" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1048" name="LongFrameIsClampedToOneTenthOfASecond" fullname="RainDropEffect.Tests.ReleaseStateTests.LongFrameIsClampedToOneTenthOfASecond" methodname="LongFrameIsClampedToOneTenthOfASecond" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="568960343" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.003845" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1050" name="RepeatedRebuildDoesNotGrowResources" fullname="RainDropEffect.Tests.ReleaseStateTests.RepeatedRebuildDoesNotGrowResources" methodname="RepeatedRebuildDoesNotGrowResources" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="737122927" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.060879" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1052" name="ResizingTheTargetDoesNotGrowResources" fullname="RainDropEffect.Tests.ReleaseStateTests.ResizingTheTargetDoesNotGrowResources" methodname="ResizingTheTargetDoesNotGrowResources" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="1850318729" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.003311" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1045" name="RestartDuringDelayIsIgnored" fullname="RainDropEffect.Tests.ReleaseStateTests.RestartDuringDelayIsIgnored" methodname="RestartDuringDelayIsIgnored" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="1164239812" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.002663" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1047" name="TimeScaleZeroFreezesTheSimulation" fullname="RainDropEffect.Tests.ReleaseStateTests.TimeScaleZeroFreezesTheSimulation" methodname="TimeScaleZeroFreezesTheSimulation" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="570695292" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.002635" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1046" name="ZeroIntensityProducesNoBatches" fullname="RainDropEffect.Tests.ReleaseStateTests.ZeroIntensityProducesNoBatches" methodname="ZeroIntensityProducesNoBatches" classname="RainDropEffect.Tests.ReleaseStateTests" runstate="Runnable" seed="1996171540" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.002136" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'ReleaseStateCamera' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1053" name="TrailAllocationTests" fullname="RainDropEffect.Tests.TrailAllocationTests" classname="RainDropEffect.Tests.TrailAllocationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.020239" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1055" name="DenseTrailEmitDoesNotAllocate" fullname="RainDropEffect.Tests.TrailAllocationTests.DenseTrailEmitDoesNotAllocate" methodname="DenseTrailEmitDoesNotAllocate" classname="RainDropEffect.Tests.TrailAllocationTests" runstate="Runnable" seed="433264910" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.013596" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainTrailAllocationCamera' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1054" name="DenseTrailTickDoesNotAllocate" fullname="RainDropEffect.Tests.TrailAllocationTests.DenseTrailTickDoesNotAllocate" methodname="DenseTrailTickDoesNotAllocate" classname="RainDropEffect.Tests.TrailAllocationTests" runstate="Runnable" seed="1898074775" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.006024" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainTrailAllocationCamera' has no profile
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1056" name="TwoCamerasShareProfileTests" fullname="RainDropEffect.Tests.TwoCamerasShareProfileTests" classname="RainDropEffect.Tests.TwoCamerasShareProfileTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.008058" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1059" name="DifferentSeedsProduceDifferentRuns" fullname="RainDropEffect.Tests.TwoCamerasShareProfileTests.DifferentSeedsProduceDifferentRuns" methodname="DifferentSeedsProduceDifferentRuns" classname="RainDropEffect.Tests.TwoCamerasShareProfileTests" runstate="Runnable" seed="1047459377" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.002815" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainCameraA' has no profile
+[RainDropEffect] RainEffect on 'RainCameraB' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1057" name="PlaybackIsIndependent" fullname="RainDropEffect.Tests.TwoCamerasShareProfileTests.PlaybackIsIndependent" methodname="PlaybackIsIndependent" classname="RainDropEffect.Tests.TwoCamerasShareProfileTests" runstate="Runnable" seed="2133752462" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.001705" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainCameraA' has no profile
+[RainDropEffect] RainEffect on 'RainCameraB' has no profile
+]]></output>
+            </test-case>
+            <test-case id="1058" name="TheProfileAssetIsNeverWrittenTo" fullname="RainDropEffect.Tests.TwoCamerasShareProfileTests.TheProfileAssetIsNeverWrittenTo" methodname="TheProfileAssetIsNeverWrittenTo" classname="RainDropEffect.Tests.TwoCamerasShareProfileTests" runstate="Runnable" seed="783410217" result="Passed" start-time="2026-09-10 11:06:21Z" end-time="2026-09-10 11:06:21Z" duration="0.002824" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RainDropEffect] RainEffect on 'RainCameraA' has no profile
+[RainDropEffect] RainEffect on 'RainCameraB' has no profile
+Saving results to: C:/Users/virtu/AppData/LocalLow/DefaultCompany/RainDropEffect2\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

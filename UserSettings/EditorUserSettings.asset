@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!162 &1
+EditorUserSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 5
+  m_ConfigSettings:
+    GraphicsSettingsInspector_UserSettings:
+      value: 18134705175a055722080a3115371d4a0d55006876786860616b0471b8b07a68ffab74f9ee2a3a30300cea1a11320d0beb1a0c25f7060f494b4cdf1b18f3045e38cb5ad8
+      flags: 0
+    QuickInstaller_com.unity.purchasing_installRecorded:
+      value: 2550581500
+      flags: 0
+    QuickInstaller_com.unity.services.levelplay_installRecorded:
+      value: 2550581500
+      flags: 0
+    RecentlyUsedSceneGuid-0:
+      value: 5703045404040d5d5d0b5d2616760c44404f4028752a77367e2a1c31bae56169
+      flags: 0
+    RecentlyUsedSceneGuid-1:
+      value: 53080502070d0d030e0b0a2649725b44404f1b7e2f7b736874284867b1b83060
+      flags: 0
+    RecentlyUsedSceneGuid-2:
+      value: 01570d5354055b0b5b5a5e7041215e4446154929287b24682b2c4964bab16d61
+      flags: 0
+    RecentlyUsedSceneGuid-3:
+      value: 57500d0004005d5f0b5a552145200d4414154f2c2e7c71637b2a1e63b4b76568
+      flags: 0
+    RecentlyUsedSceneGuid-4:
+      value: 5102005f01045e0e5a0d587148220b4413151c7f7d707634782c1863b3e6676e
+      flags: 0
+    RecentlyUsedSceneGuid-5:
+      value: 5405005153570a0a5c5b5b7443220e44444e4f722a2b2763782f1f6ae1b06439
+      flags: 0
+    RecentlyUsedSceneGuid-6:
+      value: 02555054520d580d0b5b082049715b444216482c7a7025617f791c65b5e3636f
+      flags: 0
+    RecentlyUsedSceneGuid-7:
+      value: 0754030751045f5e5c5b0a2346750b4442154c2e2d7d7069797e1c30bab06439
+      flags: 0
+    vcSharedLogLevel:
+      value: 0d5e400f0650
+      flags: 0
+  m_VCAutomaticAdd: 1
+  m_VCDebugCom: 0
+  m_VCDebugCmd: 0
+  m_VCDebugOut: 0
+  m_SemanticMergeMode: 2
+  m_DesiredImportWorkerCount: 8
+  m_StandbyImportWorkerCount: 2
+  m_IdleImportWorkerShutdownDelay: 60000
+  m_VCShowFailedCheckout: 1
+  m_VCOverwriteFailedCheckoutAssets: 1
+  m_VCProjectOverlayIcons: 1
+  m_VCHierarchyOverlayIcons: 1
+  m_VCOtherOverlayIcons: 1
+  m_VCAllowAsyncUpdate: 1
+  m_VCScanLocalPackagesOnConnect: 1
+  m_ArtifactGarbageCollection: 1
+  m_CompressAssetsOnImport: 1
+  m_VCAutoRevertUnchangedFiles: 0
